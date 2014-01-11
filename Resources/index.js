@@ -30,23 +30,6 @@
 require("jsb.js");
 require('cqwrap/_define.js');
 
-/*var appFiles = [
-	'cqwrap/index.js',
-    'src/resource.js',
-    'src/model/sgf.js',
-    'src/model/weiqi.js',
-    'src/view/loading_scene.js',
-    'src/view/bg_layer.js',
-    'src/view/menu_scene.js',
-    'src/view/play_scene.js'
-];
-
-cc.dumpConfig();
-
-for( var i=0; i < appFiles.length; i++) {
-    require( appFiles[i] );
-}*/
-
 var director = cc.Director.getInstance();
 //director.setDisplayStats(true);
 
@@ -55,7 +38,6 @@ director.setAnimationInterval(1.0 / 30);
 
 var winSize = cc.Director.getInstance().getWinSize();
 cc.offsetY = (winSize.height - winSize.width * cc.frameSize.height / cc.frameSize.width)/2;
-//cc.log(cc.offsetY);
 
 //require+CommonJS wrapper
 _require('src/app.js'); 
