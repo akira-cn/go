@@ -166,8 +166,20 @@ function isFunction(arg) {
 }
 cc.isFunction = isFunction;
 
-global.__defineGetter__('scene', function(){
+Object.defineProperty(global, 'director', {
+  get: function(){
+    return cc.Director.getInstance();
+  },
+  enumerable: true,
+  configurable: false,
+});
+
+Object.defineProperty(global, 'scene', {
+  get: function(){
     return cc.Director.getInstance().getRunningScene();
+  },     
+  enumerable: true,
+  configurable: false, 
 });
 
 })(this);

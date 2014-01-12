@@ -30,34 +30,34 @@
 require("jsb.js");
 require('cqwrap/_define.js');
 
-/*var appFiles = [
-	'cqwrap/index.js',
-    'src/resource.js',
-    'src/model/sgf.js',
-    'src/model/weiqi.js',
-    'src/view/loading_scene.js',
-    'src/view/bg_layer.js',
-    'src/view/menu_scene.js',
-    'src/view/play_scene.js'
-];
+(function(){
 
 cc.dumpConfig();
 
-for( var i=0; i < appFiles.length; i++) {
-    require( appFiles[i] );
-}*/
+    //director.setDisplayStats(true);
+    var director = cc.Director.getInstance(),
+        eglView = cc.EGLView.getInstance();
 
-var director = cc.Director.getInstance();
-//director.setDisplayStats(true);
+    // set FPS. the default value is 1.0/60 if you don't call this
+    director.setAnimationInterval(1.0 / 30);
 
-// set FPS. the default value is 1.0/60 if you don't call this
-director.setAnimationInterval(1.0 / 30);
+    var frameSize = director.getFrameSize();
 
-var winSize = cc.Director.getInstance().getWinSize();
-cc.offsetY = (winSize.height - winSize.width * cc.frameSize.height / cc.frameSize.width)/2;
-//cc.log(cc.offsetY);
+    if (frameSize.height / frameSize.width < 480.0/800) {
+        eglView.setDesignResolutionSize(480, 800, cc.RESOLUTION_POLICY.SHOW_ALL);
+    }else{
+        eglView.setDesignResolutionSize(480, 800, cc.RESOLUTION_POLICY.NOBORDER);
+    } 
 
-//require+CommonJS wrapper
-_require('src/app.js'); 
+    var winSize = director.getWinSize();
+
+    director.offsetY = (winSize.height - winSize.width * frameSize.height / frameSize.width)/2;
+
+    //require+CommonJS wrapper
+    _require('src/app.js'); 
+
+})();
+
+
 
 

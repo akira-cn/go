@@ -30,16 +30,34 @@
 require("jsb.js");
 require('cqwrap/_define.js');
 
-var director = cc.Director.getInstance();
-//director.setDisplayStats(true);
+(function(){
 
-// set FPS. the default value is 1.0/60 if you don't call this
-director.setAnimationInterval(1.0 / 30);
+cc.dumpConfig();
 
-var winSize = cc.Director.getInstance().getWinSize();
-cc.offsetY = (winSize.height - winSize.width * cc.frameSize.height / cc.frameSize.width)/2;
+    //director.setDisplayStats(true);
+    var director = cc.Director.getInstance(),
+        eglView = cc.EGLView.getInstance();
 
-//require+CommonJS wrapper
-_require('src/app.js'); 
+    // set FPS. the default value is 1.0/60 if you don't call this
+    director.setAnimationInterval(1.0 / 30);
+
+    var frameSize = director.getFrameSize();
+
+    if (frameSize.height / frameSize.width < 480.0/800) {
+        eglView.setDesignResolutionSize(480, 800, cc.RESOLUTION_POLICY.SHOW_ALL);
+    }else{
+        eglView.setDesignResolutionSize(480, 800, cc.RESOLUTION_POLICY.NOBORDER);
+    } 
+
+    var winSize = director.getWinSize();
+
+    director.offsetY = (winSize.height - winSize.width * frameSize.height / frameSize.width)/2;
+
+    //require+CommonJS wrapper
+    _require('src/app.js'); 
+
+})();
+
+
 
 

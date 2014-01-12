@@ -1,7 +1,4 @@
 define(function(require, exports, module){
-    
-    cc.dumpConfig();
-
     //preload cqwrap file
     require('cqwrap/index.js'); 
 

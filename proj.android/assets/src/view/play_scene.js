@@ -1,6 +1,5 @@
 define(function(require, exports, module){
 
-var BgLayer = require('src/view/bg_layer.js');
 var Weiqi = require('src/model/weiqi.js');
 
 function putStone(stone, boardSprite, cursor){
@@ -126,10 +125,8 @@ var LevelLayer = cc.Layer.extend({
         cc.associateWithNative( this, cc.Layer );
     },
     init:function(){
-        //this.parent.setAnchorPoint(cc.p(0.5, 0.5));
-        //var effect = cc.ScaleBy.create(0.5, 1.15);
-        //this.parent.setScale(1.15);
-        //this.parent.runAction(effect);
+        this._super();
+
         var self = this;
 
         var layer = cc.LayerColor.create(cc.c4b(0, 0, 0, 128));
@@ -266,12 +263,7 @@ var LevelLayer = cc.Layer.extend({
 });
 
 
-var MainLayer = cc.Layer.extend({
-    ctor:function(mode){
-        this._super();
-        this.mode = mode;
-        cc.associateWithNative( this, cc.Layer );
-    },
+var MainLayer = cc.GameLayer.extend({
 
     setComment:function(comment){
         if(this.commentLabel){
@@ -358,8 +350,8 @@ var MainLayer = cc.Layer.extend({
 
     loadGame: function(level){
 
-        if(cc.offsetY > 25){
-            cc.native.call('showAd');
+        if(director.offsetY > 25){
+            native.call('showAd');
         }
 
         level = level || 0;
@@ -386,9 +378,13 @@ var MainLayer = cc.Layer.extend({
         this.gameInit = true;
     },
 
-    init:function () {
+    init:function (mode) {
+        this._super();
 
         var self = this;
+
+        this.mode = mode;
+
         this.gameData = {
             'easy':{current:0, scores:[]}, 
             'normal':{current:0, scores:[]}, 
@@ -400,10 +396,10 @@ var MainLayer = cc.Layer.extend({
             this.gameData = JSON.parse(gameData);
         } 
 
-        this._super();
+        
         this.setTouchMode(cc.TOUCH_ONE_BY_ONE);
 
-        this.setTimeout(function(){
+       // this.setTimeout(function(){
             var bgBoard = cc.Sprite.createWithSpriteFrameName("bg-board.png");
             bgBoard.setAnchorPoint(cc.p(0, 0));
             bgBoard.setPosition(cc.p(0, 0));
@@ -429,14 +425,17 @@ var MainLayer = cc.Layer.extend({
             var menu = cc.Menu.create(nextButton, backButton);
             menu.setPosition(cc.p(0, 0));
             self.addChild(menu, 128);
-            menu.setHandlerPriority(-1000);
-
+            
+            this.setTimeout(function(){
+                menu.setHandlerPriority(-1000);
+            }, 0);
+            
             nextButton.setAnchorPoint(cc.p(0, 0));
             nextButton.setPosition(250, 5);
 
             backButton.setAnchorPoint(cc.p(0, 0));
             backButton.setPosition(cc.p(10, 5));
-        }, 800);
+      //  }, 800);
 
         if(this.setKeypadEnabled){   
             this.setKeypadEnabled(true);
@@ -449,12 +448,12 @@ var MainLayer = cc.Layer.extend({
         cc.registerTargetedDelegate(0, true, this);
     },
     onExit: function(){
+        this._super();
         this.gameData[this.mode].current = this.level;
         sys.localStorage.setItem('gameData', JSON.stringify(this.gameData));
-        this.clearAllTimers();
         cc.unregisterTouchDelegate(this);
-        if(cc.offsetY > 25){
-            cc.native.call('showAd');
+        if(director.offsetY > 25){
+            native.call('showAd');
         }
     },
     backClicked: function(){
@@ -495,8 +494,8 @@ var MainLayer = cc.Layer.extend({
             //console.log('>>>' + [x, y]);
             if(!this.weiqi.hasStone(x,y)){
                 this.weiqi.proceed(x, y);
-                if(cc.offsetY > 25){
-                    cc.native.call('hideAd');
+                if(director.offsetY > 25){
+                    native.call('hideAd');
                 }
                 this.gameInit = false;
                 cc.unregisterTouchDelegate(this);
@@ -521,17 +520,11 @@ var PlayScene = cc.Scene.extend({
     onEnter:function () {
         this._super();
 
-        var bg = new BgLayer('bg-play.png');
+        var bg = new cc.BgLayer('bg-play.png');
         this.addChild(bg);
-        bg.init();
-
-        cc.offsetY = cc.offsetY || 0;
         
         var main = new MainLayer(this.mode);
-        main.setAnchorPoint(cc.p(0, 0));
-        main.setPosition(cc.p(0, cc.offsetY));
         this.addChild(main);
-        main.init();
     }
 });
 

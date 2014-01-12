@@ -54,6 +54,8 @@ require(['cqwrap/index.js', 'src/resource.js', 'src/view/loading_scene.js'], fun
             cc.EGLView.getInstance().resizeWithBrowserSize(true);
             cc.EGLView.getInstance().setDesignResolutionSize(480, 800, cc.RESOLUTION_POLICY.SHOW_ALL);
 
+            director.offsetY = 0;
+            
             // turn on display FPS
             // director.setDisplayStats(this.config['showFPS']);
 

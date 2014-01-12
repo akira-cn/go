@@ -38,24 +38,14 @@ bool AppDelegate::applicationDidFinishLaunching()
     //pDirector->setDisplayStats(true);
     
     // set FPS. the default value is 1.0/60 if you don't call this
-    pDirector->setAnimationInterval(1.0 / 30);
-    
-    //CCEGLView::sharedOpenGLView()->setDesignResolutionSize(960, 1600, kResolutionShowAll);
+    // pDirector->setAnimationInterval(1.0 / 30);
 
-    CCSize size = CCEGLView::sharedOpenGLView()->getFrameSize();
-    if (size.height/size.width < 480.0/800) {
-        CCEGLView::sharedOpenGLView()->setDesignResolutionSize(480, 800, kResolutionShowAll);
-        //CCEGLView::sharedOpenGLView()->setDesignResolutionSize(960, 1600, kResolutionShowAll);
-    }else{
-        CCEGLView::sharedOpenGLView()->setDesignResolutionSize(480, 800, kResolutionShowAll);
-        //CCEGLView::sharedOpenGLView()->setDesignResolutionSize(960, 1600, kResolutionNoBorder);
-    }
-    /*CCSize size = CCEGLView::sharedOpenGLView()->getFrameSize();
-    if (size.height/size.width < 480.0/800) {
-        CCEGLView::sharedOpenGLView()->setDesignResolutionSize(960, 1600, kResolutionShowAll);
-    }else{
-        CCEGLView::sharedOpenGLView()->setDesignResolutionSize(960, 1600, kResolutionNoBorder);
-    }*/    
+    //CCSize size = CCEGLView::sharedOpenGLView()->getFrameSize();
+    //if (size.height/size.width < 480.0/800) {
+    //    CCEGLView::sharedOpenGLView()->setDesignResolutionSize(480, 800, kResolutionShowAll);
+    //}else{
+    //    CCEGLView::sharedOpenGLView()->setDesignResolutionSize(480, 800, kResolutionNoBorder);
+    //} 
     
     ScriptingCore* sc = ScriptingCore::getInstance();
     sc->addRegisterCallback(register_all_cocos2dx);

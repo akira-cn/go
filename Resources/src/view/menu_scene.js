@@ -1,6 +1,5 @@
 define(function(require, exports, module){
 
-var BgLayer = require('src/view/bg_layer.js');
 var PlayScene = require('src/view/play_scene.js');
 
 var MainLayer = cc.Layer.extend({
@@ -89,9 +88,8 @@ var MenuScene = cc.Scene.extend({
 
     onEnter:function () {
         this._super();
-        var bg = new BgLayer('bg-menu.png');
+        var bg = new cc.BgLayer('bg-menu.png');
         this.addChild(bg);
-        bg.init();
 
         var main = new MainLayer();
         this.addChild(main);

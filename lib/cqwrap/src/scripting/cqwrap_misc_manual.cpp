@@ -145,5 +145,5 @@ void register_all_misc_manual(JSContext* cx, JSObject* global){
 	JS_DefineFunction(cx, native, "postMessage", js_cocos2dx_postMessage, 2, JSPROP_READONLY | JSPROP_PERMANENT);
 
 	CCSize size = CCEGLView::sharedOpenGLView()->getFrameSize();
-	ScriptingCore::getInstance()->evalString(CCString::createWithFormat("cc.__defineGetter__('frameSize', function(){return {width:%lf,height:%lf}});", size.width, size.height)->getCString(), NULL);
+	ScriptingCore::getInstance()->evalString(CCString::createWithFormat("cc.Director.getInstance().getFrameSize = function(){return {width:%lf,height:%lf}};", size.width, size.height)->getCString(), NULL);
 }

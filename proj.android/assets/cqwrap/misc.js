@@ -1,4 +1,5 @@
 (function(global){
+    
 var MenuButton = {
     create: function(img, target, callback){
         var spriteNormal = cc.Sprite.createWithSpriteFrameName(img);
