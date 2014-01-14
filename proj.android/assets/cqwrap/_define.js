@@ -6,7 +6,8 @@
     function _require(mod){
         if(!_modCache[mod]){
             _moduleStack.push({exports:{}});
-            require(mod);
+            mod = mod.replace(/\.js$/, '');
+            require(mod + '.js');
             _modCache[mod] = module.exports;
             _moduleStack.pop();
         }

@@ -1,6 +1,9 @@
 define(function(require, exports, module){
 
 var Weiqi = require('src/model/weiqi.js');
+var Button = require('cqwrap/buttons.js').Button;
+var BgLayer = require('cqwrap/layers.js').BgLayer,
+    GameLayer = require('cqwrap/layers.js').GameLayer;
 
 function putStone(stone, boardSprite, cursor){
     var x = stone.x, y = stone.y, color = stone.type;
@@ -118,14 +121,11 @@ var WeiqiLayer = cc.Layer.extend({
     }
 });
 
-var LevelLayer = cc.Layer.extend({
-    ctor:function(parent){
+var LevelLayer = GameLayer.extend({
+
+    init:function(parent){
         this._super();
         this.parent = parent;
-        cc.associateWithNative( this, cc.Layer );
-    },
-    init:function(){
-        this._super();
 
         var self = this;
 
@@ -140,15 +140,10 @@ var LevelLayer = cc.Layer.extend({
         var n = WeiqiData[mode].length -  1,
             h = (n / 3) | 0;
 
-        var container = cc.Layer.create();
-        container.setAnchorPoint(cc.p(0, 0));
-        container.setPosition(cc.p(0, 0));
-        container.setContentSize(cc.size(450, 150 * (h+1)));
+        var ScrollView = require('cqwrap/scroll.js').ScrollView;
 
-        var menu = cc.Menu.create();
-        menu.setAnchorPoint(cc.p(0, 0));
-        menu.setPosition(cc.p(0,  150 * h + 22));
-        container.addChild(menu);
+        var scrollView = ScrollView.create(cc.size(480, 441), cc.size(450, 150 * (h+1)));
+        var scrollLayer = scrollView.getContentLayer();
 
         var level = self.parent.level;
         //cc.log(offset);
@@ -163,10 +158,7 @@ var LevelLayer = cc.Layer.extend({
 
                     function f(){
                         var name = "game_"+ (c % 8 + 1) + ".png";
-                        var levelNormal = cc.Sprite.createWithSpriteFrameName(name);
-                        var levelSelected = cc.Sprite.createWithSpriteFrameName(name);
-                            levelSelected.setScaleY(0.9);
-                            levelSelected.setOpacity(180);        
+                        var levelNormal = cc.Sprite.createWithSpriteFrameName(name);      
                         
                         var labelId = cc.LabelTTF.create((c + 1), "Arial", 27);
                         labelId.setAnchorPoint(cc.p(0.5, 0.5));
@@ -181,12 +173,6 @@ var LevelLayer = cc.Layer.extend({
                             levelNormal.addChild(levelCurrent);
                         }
 
-                        labelId = cc.LabelTTF.create((c + 1), "Arial", 27);
-                        labelId.setAnchorPoint(cc.p(0.5, 0.5));
-                        labelId.setPosition(cc.p(60, 60));
-                        labelId.setColor(cc.c3b(0, 0, 0));                 
-                        levelSelected.addChild(labelId);
-
                         var score = self.parent.gameData[self.parent.mode].scores[c];
                         if(score){
                             var labelScore = cc.LabelTTF.create(score, "Arial", 19);
@@ -196,32 +182,23 @@ var LevelLayer = cc.Layer.extend({
                             levelNormal.addChild(labelScore);
                         }
 
-                        var menuItem = cc.MenuItemSprite.create(
+                        var menuItem = Button.create(
                             levelNormal,
-                            levelSelected,
                             (function(c){
-                                return function() {
-                                    var offset = scrollView.getContentOffset();
-                                    var duce = Math.abs(Math.abs(offset.y) - Math.abs(oldOffset.y));
-                                    oldOffset = offset;
-                                    //如果移动大于10px，则为移动
-                                    if (duce > 10) {
-                                        return true;
-                                    };
+                                return function(item) {
+
                                     self.parent.loadGame(c);
                                     self.removeFromParent(true);
                                     self.parent.levelLayer = null;
 
                                     Audio.playEffect('audio/submenu_click.ogg');
                                 }
-                            })(c), 
-                            self                
+                            })(c)            
                         );
+
                         menuItem.setAnchorPoint(cc.p(0, 0));
-                        menuItem.setPosition(cc.p(150 * j, - 150 * i));
-
-                        menu.addChild(menuItem);  
-
+                        menuItem.setPosition(cc.p(150 * j, 150 * (h - i) + 16));
+                        scrollLayer.addChild(menuItem);
                     }
                     if(Math.abs(level - c) < 9){
                         f();
@@ -232,29 +209,17 @@ var LevelLayer = cc.Layer.extend({
             }         
         }
 
-        var scrollView = cc.ScrollView.create(cc.size(480, 441), container);
+        
         scrollView.setAnchorPoint(cc.p(0, 0));
         scrollView.setPosition(cc.p(0, 122));
         scrollView.setDirection(cc.SCROLLVIEW_DIRECTION_VERTICAL);
         var offset = scrollView.minContainerOffset();
         offset.y += ((level / 9) | 0) * 450;
-        //offset.y += Math.min(h - 2, Math.max(0, ((level / 3) | 0) - 1)) * 300;
         scrollView.setContentOffset(offset);
 
-        this.addChild(scrollView);
-
-        var oldOffset = scrollView.getContentOffset();
-        //cc.log([oldOffset.x, oldOffset.y]);
+        this.addChild(scrollView, 1);
 
         this.scrollView = scrollView;
-
-        this.resetOffset = function(){
-            oldOffset = scrollView.getContentOffset();
-        }
-
-        this.setTimeout(function(){
-             menu.setHandlerPriority(1);
-        },0);
     },
     onExit: function(){
         this._super();
@@ -263,7 +228,7 @@ var LevelLayer = cc.Layer.extend({
 });
 
 
-var MainLayer = cc.GameLayer.extend({
+var MainLayer = GameLayer.extend({
 
     setComment:function(comment){
         if(this.commentLabel){
@@ -328,6 +293,10 @@ var MainLayer = cc.GameLayer.extend({
             this.levelLayer = null;
         }else{
             if(this.gameInit){
+                var MenuScene = require('src/view/menu_scene.js');
+                var playScene = new MenuScene();
+                var scene = cc.TransitionFade.create(0.8, playScene);
+
                 director.popScene();
             }else{
                 this.loadGame(this.level);
@@ -342,7 +311,6 @@ var MainLayer = cc.GameLayer.extend({
             this.levelLayer = null;
         }else{
             var levelLayer = new LevelLayer(this);
-            levelLayer.init();
             this.addChild(levelLayer, 30);
             this.levelLayer = levelLayer;
         }
@@ -399,133 +367,118 @@ var MainLayer = cc.GameLayer.extend({
         
         this.setTouchMode(cc.TOUCH_ONE_BY_ONE);
 
-       // this.setTimeout(function(){
-            var bgBoard = cc.Sprite.createWithSpriteFrameName("bg-board.png");
-            bgBoard.setAnchorPoint(cc.p(0, 0));
-            bgBoard.setPosition(cc.p(0, 0));
-            self.addChild(SpriteFadeInTR.create(0.5, bgBoard), 0);           
+        var bgBoard = cc.Sprite.createWithSpriteFrameName("bg-board.png");
+        bgBoard.setAnchorPoint(cc.p(0, 0));
+        bgBoard.setPosition(cc.p(0, 0));
 
-            self.loadGame(self.gameData[self.mode].current);
+        var boardLayer = new GameLayer();
+        boardLayer.setClickAndMove(false);
+        boardLayer.addChild(SpriteFadeInTR.create(0.5, bgBoard));
+        boardLayer.delegate(bgBoard);
+        boardLayer.setClickAndMove(false);
+        this.addChild(boardLayer);           
 
-            var boardFrame = cc.Sprite.createWithSpriteFrameName("board-border.png");
-            boardFrame.setAnchorPoint(cc.p(0, 0));
-            boardFrame.setPosition(cc.p(0, 0));
-            self.addChild(SpriteFadeInTR.create(0.5, boardFrame), 1);
+        this.loadGame(this.gameData[this.mode].current);
 
-            var nextButton = MenuButton.create('button-next.png', self, function(){
+        var boardFrame = cc.Sprite.createWithSpriteFrameName("board-border.png");
+        boardFrame.setAnchorPoint(cc.p(0, 0));
+        boardFrame.setPosition(cc.p(0, 0));
+        this.addChild(SpriteFadeInTR.create(0.5, boardFrame), 1);
+
+        var nextButton = Button.create('button-next.png', 
+            function(){
                 self.goNext();
             });
 
-            var backButton = MenuButton.create('button-back.png', self, function(){
+        var backButton = Button.create('button-back.png', 
+            function(){
                 self.goBack();
             });
-            
-            //var size = cc.Director.getInstance().getWinSize();
+        
+        //var size = cc.Director.getInstance().getWinSize();
+        
+        nextButton.setAnchorPoint(cc.p(0, 0));
+        nextButton.setPosition(250, 5);
+        this.addChild(nextButton, 128);
 
-            var menu = cc.Menu.create(nextButton, backButton);
-            menu.setPosition(cc.p(0, 0));
-            self.addChild(menu, 128);
-            
-            this.setTimeout(function(){
-                menu.setHandlerPriority(-1000);
-            }, 0);
-            
-            nextButton.setAnchorPoint(cc.p(0, 0));
-            nextButton.setPosition(250, 5);
-
-            backButton.setAnchorPoint(cc.p(0, 0));
-            backButton.setPosition(cc.p(10, 5));
-      //  }, 800);
+        backButton.setAnchorPoint(cc.p(0, 0));
+        backButton.setPosition(cc.p(10, 5));
+        this.addChild(backButton, 128);
 
         if(this.setKeypadEnabled){   
             this.setKeypadEnabled(true);
         }
 
+        bgBoard.on('touchstart', function(touch){
+            if(self.levelLayer){
+                var touchLocation = touch.getLocation();
+                var scrollView = self.levelLayer.scrollView;
+
+                var local = scrollView.convertToNodeSpace(touchLocation);
+
+                var r = cc.rect(0, 0, 480, 441);
+                //cc.log([local.x, local.y]);
+                if (cc.rectContainsRect(r, local)) {
+                    touch.preventDefault();
+                }      
+            }
+        });
+
+        bgBoard.on('click', function(touch){
+            if(self.gameover || self.levelLayer){
+                return;
+            }
+            var touchLocation = touch.getLocation();
+            touchLocation = self.convertToNodeSpace(touchLocation);
+            var x = Math.round((441 - touchLocation.x) / 43),
+                y = Math.round((touchLocation.y - 145) / 43);
+
+            if(x <= 10 && y <= 10){
+                if(!self.weiqi.hasStone(x,y)){
+                    self.weiqi.proceed(x, y);
+                    if(director.offsetY > 25){
+                        native.call('hideAd');
+                    }
+                    self.gameInit = false;
+                    self.unregisterDelegate();
+                    self.setTimeout(function(){
+                        self.registerDelegate();
+                    }, 500);
+                }
+            }
+        });
+
         return true;
     },
     onEnter: function(){
         this._super();
-        cc.registerTargetedDelegate(0, true, this);
     },
     onExit: function(){
         this._super();
         this.gameData[this.mode].current = this.level;
         sys.localStorage.setItem('gameData', JSON.stringify(this.gameData));
-        cc.unregisterTouchDelegate(this);
         if(director.offsetY > 25){
             native.call('showAd');
         }
     },
     backClicked: function(){
-        //cc.Director.getInstance().end();
         this.goBack();
     },
-    onTouchBegan:function (touch, event) {
-        //cc.log('touchBegain');
-        if(this.levelLayer){
-            var touchLocation = touch.getLocation();
-            var scrollView = this.levelLayer.scrollView;
-
-            this.levelLayer.resetOffset();
-
-            var local = scrollView.convertToNodeSpace(touchLocation);
-
-            var r = cc.rect(0, 0, 480, 441);
-            //cc.log([local.x, local.y]);
-            if (cc.rectContainsRect(r, local)) {
-                return false;
-            }else{
-                return true;
-            }         
-        }
-        return true;
-    },
-    onTouchEnded: function(touch, event){
-        if(this.gameover || this.levelLayer){
-            return;
-        }
-        var touchLocation = touch.getLocation();
-        touchLocation = this.convertToNodeSpace(touchLocation);
-        var x = Math.round((441 - touchLocation.x) / 43),
-            y = Math.round((touchLocation.y - 145) / 43);
-        var self = this;
-
-        if(x <= 10 && y <= 10){
-            //console.log('>>>' + [x, y]);
-            if(!this.weiqi.hasStone(x,y)){
-                this.weiqi.proceed(x, y);
-                if(director.offsetY > 25){
-                    native.call('hideAd');
-                }
-                this.gameInit = false;
-                cc.unregisterTouchDelegate(this);
-                this.setTimeout(function(){
-                    cc.registerTargetedDelegate(0, true, self);
-                }, 500);
-            }/*else{
-                cc.log(JSON.stringify(this.weiqi.getJointStones(x,y)));
-            }*/
-        }
-        //cc.log([touchLocation.x, touchLocation.y, x, y]);
-    }
 });
 
-var PlayScene = cc.Scene.extend({
-    ctor:function(mode) {
-        this._super();
-        this.mode = mode;
-        cc.associateWithNative( this, cc.Scene );
-    },
+var BaseScene = require('cqwrap/scenes.js').BaseScene;
 
-    onEnter:function () {
+var PlayScene = BaseScene.extend({
+
+    init:function (mode) {
         this._super();
 
-        var bg = new cc.BgLayer('bg-play.png');
+        var bg = new BgLayer('bg-play.png');
         this.addChild(bg);
         
-        var main = new MainLayer(this.mode);
-        this.addChild(main);
-    }
+        var main = new MainLayer(mode);
+        this.addChild(main, 1);
+    },
 });
 
 module.exports = PlayScene;

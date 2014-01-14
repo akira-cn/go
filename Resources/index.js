@@ -29,6 +29,8 @@
 
 require("jsb.js");
 require('cqwrap/_define.js');
+//require('cqwrap/base.js');
+
 
 (function(){
 
@@ -47,7 +49,7 @@ cc.dumpConfig();
         eglView.setDesignResolutionSize(480, 800, cc.RESOLUTION_POLICY.SHOW_ALL);
     }else{
         eglView.setDesignResolutionSize(480, 800, cc.RESOLUTION_POLICY.NOBORDER);
-    } 
+    }
 
     var winSize = director.getWinSize();
 
@@ -55,6 +57,10 @@ cc.dumpConfig();
 
     //require+CommonJS wrapper
     _require('src/app.js'); 
+
+    //require('src/view/test_scene.js');
+    //var loadingScene = new LoadingScene({country:'CN'});
+    //    director.runWithScene(loadingScene);
 
 })();
 

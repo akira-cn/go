@@ -1,23 +1,4 @@
 (function(global){
-    
-var MenuButton = {
-    create: function(img, target, callback){
-        var spriteNormal = cc.Sprite.createWithSpriteFrameName(img);
-        var spriteSelected = cc.Sprite.createWithSpriteFrameName(img);
-        spriteSelected.setScaleY(0.9);
-        spriteSelected.setOpacity(180);
-
-        return cc.MenuItemSprite.create(
-            spriteNormal,
-            spriteSelected,
-            function(){
-                callback.apply(this, arguments);
-                Audio.playEffect('audio/btnclick.ogg');
-            }, 
-            target
-        );
-    }
-};
 
 var SpriteFadeInTR = {
     create: function(dur, sprite, to){
@@ -41,7 +22,6 @@ var Audio = {
     }
 };
 
-global.MenuButton = MenuButton;
 global.SpriteFadeInTR = SpriteFadeInTR;
 global.Audio = Audio;
 })(this);
