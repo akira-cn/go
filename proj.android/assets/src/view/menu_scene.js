@@ -1,53 +1,51 @@
 define(function(require, exports, module){
 
-var PlayScene = require('src/view/play_scene.js');
-var Button = require('cqwrap/buttons.js').Button;
-var BgLayer = require('cqwrap/layers.js').BgLayer,
-    GameLayer = require('cqwrap/layers.js').GameLayer;
+var PlayScene = require('src/view/play_scene');
+var Button = require('cqwrap/buttons').Button;
+var BgLayer = require('cqwrap/layers').BgLayer,
+    GameLayer = require('cqwrap/layers').GameLayer;
+
+var BaseSprite = require('cqwrap/sprites').BaseSprite;
+
+var Audio = require('cqwrap/audio').Audio;
 
 var MainLayer = GameLayer.extend({
 
     init: function(){
         this._super();
 
-        var logoSprite = cc.Sprite.createWithSpriteFrameName('logo.png');
-        logoSprite.setAnchorPoint(cc.p(0, 1.0));
-        logoSprite.setPosition(cc.p(0, 800));
-        this.addChild(logoSprite);
+        this.addSprite('logo.png', cc.p(0, 800), 0, cc.p(0, 1.0));
 
-        var easyButton = Button.create('button-easy.png',
+        var easyButton = new Button('button-easy.png',
             function(){
                 Audio.playEffect('audio/btnclick.ogg');
                 var playScene = new PlayScene('easy');
                 var scene = cc.TransitionFade.create(0.8, playScene);
                 director.pushScene(scene);            
             });
-        easyButton.setAnchorPoint(cc.p(0.5, 0));
-        easyButton.setPosition(240, 355); 
-        this.addChild(easyButton);
 
-        var normalButton = Button.create('button-normal.png',
+        this.addSprite(easyButton, cc.p(240, 355), 0, cc.p(0.5, 0));
+
+        var normalButton = new Button('button-normal.png',
             function(){
                 Audio.playEffect('audio/btnclick.ogg');
                 var playScene = new PlayScene('normal');
                 var scene = cc.TransitionFade.create(0.8, playScene);
                 director.pushScene(scene);                
             });
-        normalButton.setAnchorPoint(cc.p(0.5, 0));
-        normalButton.setPosition(240, 230);
-        this.addChild(normalButton);
+
+        this.addSprite(normalButton, cc.p(240, 230), 0, cc.p(0.5, 0));
 
 
-        var hardButton = Button.create('button-hard.png', 
+        var hardButton = new Button('button-hard.png', 
             function(){
                 Audio.playEffect('audio/btnclick.ogg');
                 var playScene = new PlayScene('hard');
                 var scene = cc.TransitionFade.create(0.8, playScene);
                 director.pushScene(scene);
             });
-        hardButton.setAnchorPoint(cc.p(0.5, 0));
-        hardButton.setPosition(240, 105);
-        this.addChild(hardButton);
+
+        this.addSprite(hardButton, cc.p(240, 105), 0, cc.p(0.5, 0));
 
         var gameSettings = sys.localStorage.getItem('gameSettings');
         if(gameSettings){
@@ -55,10 +53,11 @@ var MainLayer = GameLayer.extend({
         }else{
             gameSettings = {sound: 1};
         }
+        Audio.setEnable(gameSettings.sound);
 
         var sound_btn_pic = ['btn_sound_disabled.png', 'btn_sound.png']
 
-        var soundButton = Button.create(sound_btn_pic[gameSettings.sound], 
+        var soundButton = new Button(sound_btn_pic[gameSettings.sound], 
             function(touch, item){
                 Audio.playEffect('audio/btnclick.ogg');
                 gameSettings.sound = !gameSettings.sound - 0;
@@ -67,16 +66,8 @@ var MainLayer = GameLayer.extend({
                 sys.localStorage.setItem('gameSettings', JSON.stringify(gameSettings));
             });  
 
-        Audio.setEnable(gameSettings.sound);
+        this.addSprite(soundButton, cc.p(400, 40));
 
-        soundButton.setAnchorPoint(cc.p(0, 0));
-        soundButton.setPosition(400, 40);
-        this.addChild(soundButton);
-
-        if(this.setKeypadEnabled){   
-            this.setKeypadEnabled(true);
-        }
-        
         return true;  
     },
 

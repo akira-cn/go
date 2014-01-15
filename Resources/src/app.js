@@ -13,5 +13,6 @@ define(function(require, exports, module){
     }).otherwise(function(err){
         cc.log(err);
     });
+
 });
 

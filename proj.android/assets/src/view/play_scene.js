@@ -1,9 +1,12 @@
 define(function(require, exports, module){
 
-var Weiqi = require('src/model/weiqi.js');
-var Button = require('cqwrap/buttons.js').Button;
-var BgLayer = require('cqwrap/layers.js').BgLayer,
-    GameLayer = require('cqwrap/layers.js').GameLayer;
+var Weiqi = require('src/model/weiqi');
+var Button = require('cqwrap/buttons').Button;
+var BgLayer = require('cqwrap/layers').BgLayer,
+    GameLayer = require('cqwrap/layers').GameLayer;
+
+var Audio = require('cqwrap/audio').Audio;
+var SpriteFadeInTR = require('cqwrap/effects').SpriteFadeInTR;
 
 function putStone(stone, boardSprite, cursor){
     var x = stone.x, y = stone.y, color = stone.type;
@@ -182,7 +185,7 @@ var LevelLayer = GameLayer.extend({
                             levelNormal.addChild(labelScore);
                         }
 
-                        var menuItem = Button.create(
+                        var menuItem = new Button(
                             levelNormal,
                             (function(c){
                                 return function(item) {
@@ -385,13 +388,15 @@ var MainLayer = GameLayer.extend({
         boardFrame.setPosition(cc.p(0, 0));
         this.addChild(SpriteFadeInTR.create(0.5, boardFrame), 1);
 
-        var nextButton = Button.create('button-next.png', 
+        var nextButton = new Button('button-next.png', 
             function(){
+                Audio.playEffect('audio/btnclick.ogg');
                 self.goNext();
             });
 
-        var backButton = Button.create('button-back.png', 
+        var backButton = new Button('button-back.png', 
             function(){
+                Audio.playEffect('audio/btnclick.ogg');
                 self.goBack();
             });
         
