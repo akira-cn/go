@@ -3,27 +3,28 @@ define(function(require, exports, module){
 var Weiqi = require('src/model/weiqi');
 var Button = require('cqwrap/buttons').Button;
 var BgLayer = require('cqwrap/layers').BgLayer,
-    GameLayer = require('cqwrap/layers').GameLayer;
+    GameLayer = require('cqwrap/layers').GameLayer,
+    BaseSprite = require('cqwrap/sprites').BaseSprite;
 
 var Audio = require('cqwrap/audio').Audio;
-var SpriteFadeInTR = require('cqwrap/effects').SpriteFadeInTR;
+var TransitionFade = require('cqwrap/transitions').TransitionFade;
 
 function putStone(stone, boardSprite, cursor){
     var x = stone.x, y = stone.y, color = stone.type;
-    var stoneSprite = cc.Sprite.createWithSpriteFrameName(color+".png");
+    var stoneSprite = new BaseSprite(color+".png");
     x = 437 - x * 43;
     y = 40 + y * 43;
     //console.log([x, y]);
     stoneSprite.setAnchorPoint(cc.p(0.5, 0.5));
     stoneSprite.setPosition(cc.p(x, y));
-    boardSprite.addChild(SpriteFadeInTR.create(0.5, stoneSprite));
+    boardSprite.addChild(TransitionFade.create(0.5, stoneSprite));
     stone.sprite = stoneSprite;
 
     if(cursor){
         var cursorSprite = boardSprite.cursor;
         
         if(!boardSprite.cursor){
-            cursorSprite = cc.Sprite.createWithSpriteFrameName("cursor.png");
+            cursorSprite = new BaseSprite("cursor.png");
             cursorSprite.setAnchorPoint(cc.p(0.5, 0.5));
             cursorSprite.setPosition(cc.p(x, y));
             boardSprite.addChild(cursorSprite, 10);
@@ -42,18 +43,15 @@ function putStone(stone, boardSprite, cursor){
     return stoneSprite;   
 }
 
-var WeiqiLayer = cc.Layer.extend({
-    ctor: function(parent){
+var WeiqiLayer = GameLayer.extend({
+
+    init: function(parent){
+
         this._super();
         this.parent = parent;
-        cc.associateWithNative( this, cc.Layer );        
-    },
 
-    init: function(){
-        var boardSprite = cc.Sprite.createWithSpriteFrameName("board.png");
-        boardSprite.setAnchorPoint(cc.p(0, 0));
-        boardSprite.setPosition(cc.p(5, 110));
-        this.addChild(SpriteFadeInTR.create(0.5, boardSprite, 150));
+        var boardSprite = new BaseSprite("board.png");
+        this.addSprite(TransitionFade.create(0.5, boardSprite, 150), cc.p(5, 110));
 
         var self = this;
 
@@ -135,9 +133,7 @@ var LevelLayer = GameLayer.extend({
         var layer = cc.LayerColor.create(cc.c4b(0, 0, 0, 128));
         this.addChild(layer);
 
-        var levelsBg = cc.Sprite.createWithSpriteFrameName('bg-levels.png');
-        levelsBg.setAnchorPoint(cc.p(0, 0));
-        this.addChild(levelsBg);
+        this.addSprite('bg-levels.png');
 
         var mode = this.parent.mode;
         var n = WeiqiData[mode].length -  1,
@@ -161,7 +157,7 @@ var LevelLayer = GameLayer.extend({
 
                     function f(){
                         var name = "game_"+ (c % 8 + 1) + ".png";
-                        var levelNormal = cc.Sprite.createWithSpriteFrameName(name);      
+                        var levelNormal = new BaseSprite(name);      
                         
                         var labelId = cc.LabelTTF.create((c + 1), "Arial", 27);
                         labelId.setAnchorPoint(cc.p(0.5, 0.5));
@@ -170,7 +166,7 @@ var LevelLayer = GameLayer.extend({
                         levelNormal.addChild(labelId);
 
                         if(c == level){
-                            var levelCurrent = cc.Sprite.createWithSpriteFrameName('selected.png');
+                            var levelCurrent = new BaseSprite('selected.png');
                             levelCurrent.setAnchorPoint(cc.p(0.5, 0.5));
                             levelCurrent.setPosition(cc.p(65, 55));
                             levelNormal.addChild(levelCurrent);
@@ -255,16 +251,16 @@ var MainLayer = GameLayer.extend({
             this.removeChild(this.scoreSprite, true);
             this.scoreSprite = null;
         }
-        this.scoreSprite = cc.Sprite.create();
+        this.scoreSprite = new BaseSprite();
 
         for(var i = 0; i < 3; i++){
             if(i < score){
-                var heart = cc.Sprite.createWithSpriteFrameName("heart-red.png");
+                var heart = new BaseSprite("heart-red.png");
                 heart.setPosition(cc.p(438 - i * 45, 700));
                 heart.setAnchorPoint(cc.p(0.5, 0.5));
                 this.scoreSprite.addChild(heart, 15); 
             }else{
-                var heart = cc.Sprite.createWithSpriteFrameName("heart-grey.png");
+                var heart = new BaseSprite("heart-grey.png");
                 heart.setPosition(cc.p(438 - i * 45, 700));
                 heart.setAnchorPoint(cc.p(0.5, 0.5));
                 this.scoreSprite.addChild(heart, 15); 
@@ -283,6 +279,7 @@ var MainLayer = GameLayer.extend({
 
         var effect = cc.MoveBy.create(0.5, cc._p(-150, 150) ),
             effect2 = cc.ScaleBy.create(0.5, 0.2);
+
         label.runAction(effect);
         label.runAction(effect2);
 
@@ -296,10 +293,6 @@ var MainLayer = GameLayer.extend({
             this.levelLayer = null;
         }else{
             if(this.gameInit){
-                var MenuScene = require('src/view/menu_scene.js');
-                var playScene = new MenuScene();
-                var scene = cc.TransitionFade.create(0.8, playScene);
-
                 director.popScene();
             }else{
                 this.loadGame(this.level);
@@ -330,7 +323,6 @@ var MainLayer = GameLayer.extend({
 
         if(!this.weiqi){
             var weiqiLayer = new WeiqiLayer(this);
-            weiqiLayer.init();
             this.addChild(weiqiLayer);
             this.weiqi = weiqiLayer.weiqi;
         }
@@ -370,23 +362,23 @@ var MainLayer = GameLayer.extend({
         
         this.setTouchMode(cc.TOUCH_ONE_BY_ONE);
 
-        var bgBoard = cc.Sprite.createWithSpriteFrameName("bg-board.png");
+        var bgBoard = new BaseSprite("bg-board.png");
         bgBoard.setAnchorPoint(cc.p(0, 0));
         bgBoard.setPosition(cc.p(0, 0));
 
         var boardLayer = new GameLayer();
         boardLayer.setClickAndMove(false);
-        boardLayer.addChild(SpriteFadeInTR.create(0.5, bgBoard));
+        boardLayer.addChild(TransitionFade.create(0.5, bgBoard));
         boardLayer.delegate(bgBoard);
         boardLayer.setClickAndMove(false);
         this.addChild(boardLayer);           
 
         this.loadGame(this.gameData[this.mode].current);
 
-        var boardFrame = cc.Sprite.createWithSpriteFrameName("board-border.png");
+        var boardFrame = new BaseSprite("board-border.png");
         boardFrame.setAnchorPoint(cc.p(0, 0));
         boardFrame.setPosition(cc.p(0, 0));
-        this.addChild(SpriteFadeInTR.create(0.5, boardFrame), 1);
+        this.addChild(TransitionFade.create(0.5, boardFrame), 1);
 
         var nextButton = new Button('button-next.png', 
             function(){

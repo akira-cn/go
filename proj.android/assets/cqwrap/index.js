@@ -12,7 +12,7 @@ define(function(require, exports, module){
     require('cqwrap/scenes');
     require('cqwrap/layers');
     require('cqwrap/buttons');
-    require('cqwrap/effects');
+    require('cqwrap/transitions');
     require('cqwrap/scroll');
     
     require('cqwrap/wrapper');
