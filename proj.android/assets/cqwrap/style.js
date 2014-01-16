@@ -380,8 +380,23 @@ var styleMap = {
             }
         }
     },
+
+    rotate: {
+        set: function(node, value){
+            if(node && node.setRotation){
+                node.setRotation(value);
+                return true;
+            }
+        },
+        get: function(node){
+            if(node && node.getRotation){
+                return node.getRotation();
+            }
+        }
+    }
 };
 
+styleMap.zIndex = styleMap.zOrder;
 styleMap.xy = styleMap.position;
 styleMap.x = styleMap.positionX;
 styleMap.y = styleMap.positionY;

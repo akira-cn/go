@@ -51,7 +51,11 @@ var WeiqiLayer = GameLayer.extend({
         this.parent = parent;
 
         var boardSprite = new BaseSprite("board.png");
-        this.addSprite(TransitionFade.create(0.5, boardSprite, 150), cc.p(5, 110));
+        this.addSprite(TransitionFade.create(0.5, boardSprite, 150), {
+                x: 5,
+                y: 110,
+                anchor: [0, 0],
+            });
 
         var self = this;
 
@@ -133,7 +137,9 @@ var LevelLayer = GameLayer.extend({
         var layer = cc.LayerColor.create(cc.c4b(0, 0, 0, 128));
         this.addChild(layer);
 
-        this.addSprite('bg-levels.png');
+        this.addSprite('bg-levels.png', {
+                anchor: [0, 0]
+            });
 
         var mode = this.parent.mode;
         var n = WeiqiData[mode].length -  1,
