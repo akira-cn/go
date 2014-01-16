@@ -18,6 +18,18 @@ var BaseSprite = cc.Sprite.extend({
     }
 });
 
+cc.createSprite = function(sprite, pos, anchor, rect){
+  if(typeof sprite === 'string'){
+      sprite = new BaseSprite(sprite);
+  }
+  sprite.setAnchorPoint(anchor || cc.p(0, 0));
+  sprite.setPosition(pos || cc.p(0, 0));
+  if(rect){
+    sprite.setTextureRect(rect);
+  }
+  return sprite;
+}
+
 module.exports = {
     BaseSprite: BaseSprite
 };

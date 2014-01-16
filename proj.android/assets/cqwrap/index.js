@@ -6,9 +6,17 @@ define(function(require, exports, module){
     require('cqwrap/events');
     require('cqwrap/when');
     require('cqwrap/native');
+
+    if(!global.md5){
+        require('cqwrap/md5');
+    }
+
     require('cqwrap/audio');
+
+    require('cqwrap/style');
     require('cqwrap/nodes');
     require('cqwrap/sprites');
+    require('cqwrap/labels');
     require('cqwrap/scenes');
     require('cqwrap/layers');
     require('cqwrap/buttons');

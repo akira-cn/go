@@ -14,7 +14,42 @@ var MainLayer = GameLayer.extend({
     init: function(){
         this._super();
 
-        this.addSprite('logo.png', cc.p(0, 800), 0, cc.p(0, 1.0));
+        //this.addSprite('logo.png', cc.p(0, 800), 0, cc.p(0, 1.0));
+        /*var logo = new BaseSprite();
+        
+        var Style = require('cqwrap/style').StyleManager;
+        
+        Style.setStyle(logo, {
+            texture: 'res/logo.png',
+            anchor: '0, 1.0',
+            position: '0, 800',
+            'z-order': 12
+        });       
+
+        this.addChild(logo);*/
+
+        var Style = require('cqwrap/style').StyleManager;
+        var label = cc.LabelTTF.create("abc", "Times New Roman", 16);
+        Style.setStyle(label, {
+            'anchor': [0, 1.0],
+            'x': 0,
+            'y': 600,
+            'color': '#f00',
+            'font-size': 55,
+            'font-family': 'Times New Roman',
+            'text-align': 'center',
+            'v-align': 'middle',
+            'width': 480,
+            'scale': 0.6,
+        });
+        this.addChild(label);
+
+        setTimeout(function(){
+            //var texture = cc.TextureCache.getInstance().addImage('res/buttons-c.png');
+            //ar texture = Style.getStyle(logo, 'texture');          
+            //cc.log(texture instanceof cc.Texture2D);
+            //cc.log(logo.getZOrder());
+        });
 
         var easyButton = new Button('button-easy.png',
             function(){
