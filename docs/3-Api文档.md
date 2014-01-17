@@ -1,4 +1,4 @@
-# Api 文档
+# Api 范例
 
 ## 模块定义与加载规范
 
@@ -6,15 +6,15 @@
 
 define(function(require, exports, module){
 
-var ClassA = require('moduleA').ClassA;
+    var ClassA = require('moduleA').ClassA;
 
-var obj = new ClassA();
+    var obj = new ClassA();
 
-dosth...
+    dosth...
 
-module.exports = {
-    sth: sth
-}
+    module.exports = {
+        sth: sth
+    };
 
 });
 
