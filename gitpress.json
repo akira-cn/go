@@ -1,5 +1,5 @@
 {
-    "docs"      : ["README.md", "docs"],
+    "docs"      : ["docs"],
     "title"  : "JS lib for cocos2dx",
     "comment"  : "on",
     "order"  : "number"
