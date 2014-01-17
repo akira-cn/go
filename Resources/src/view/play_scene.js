@@ -409,7 +409,6 @@ var MainLayer = GameLayer.extend({
         });
 
         var boardLayer = new GameLayer();
-        boardLayer.setClickAndMove(false);
         boardLayer.addChild(TransitionFade.create(0.5, bgBoard));
         boardLayer.delegate(bgBoard);
         boardLayer.setClickAndMove(false);
