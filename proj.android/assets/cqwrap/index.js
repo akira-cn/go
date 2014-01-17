@@ -12,6 +12,7 @@ define(function(require, exports, module){
     }
 
     require('cqwrap/audio');
+    require('cqwrap/data');
 
     require('cqwrap/style');
     require('cqwrap/nodes');

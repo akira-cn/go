@@ -20,8 +20,6 @@ var MainLayer = GameLayer.extend({
             'anchor': [0.5, 0.5],
             'xy': [240, 636],
             'z-order': 0,
-            //'scale': 0.5,
-            //'rotate': 90
         });
 
         /*this.addSprite("@Hello World", {
@@ -78,23 +76,20 @@ var MainLayer = GameLayer.extend({
                 'anchor': [0.5, 0],
             });
 
-        var gameSettings = sys.localStorage.getItem('gameSettings');
-        if(gameSettings){
-            gameSettings = JSON.parse(gameSettings);
-        }else{
-            gameSettings = {sound: 1};
-        }
-        Audio.setEnable(gameSettings.sound);
+        var GameSettings = require('cqwrap/data').GameSettings;
+        var enabelSound = GameSettings.get('sound', 1);
+
+        Audio.setEnable(enabelSound);
 
         var sound_btn_pic = ['btn_sound_disabled.png', 'btn_sound.png']
 
-        var soundButton = new Button(sound_btn_pic[gameSettings.sound], 
+        var soundButton = new Button(sound_btn_pic[enabelSound], 
             function(touch, item){
                 Audio.playEffect('audio/btnclick.ogg');
-                gameSettings.sound = !gameSettings.sound - 0;
-                Audio.setEnable(gameSettings.sound);
-                item.setContentSprite(cc.Sprite.createWithSpriteFrameName(sound_btn_pic[gameSettings.sound]));
-                sys.localStorage.setItem('gameSettings', JSON.stringify(gameSettings));
+                enabelSound = !enabelSound - 0;
+                Audio.setEnable(enabelSound);
+                item.setContentSprite(cc.Sprite.createWithSpriteFrameName(sound_btn_pic[enabelSound]));
+                GameSettings.set('sound', enabelSound);
             });  
 
         this.addSprite(soundButton, {

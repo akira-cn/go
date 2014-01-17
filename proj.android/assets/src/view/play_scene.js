@@ -9,14 +9,18 @@ var BgLayer = require('cqwrap/layers').BgLayer,
 var Audio = require('cqwrap/audio').Audio;
 var TransitionFade = require('cqwrap/transitions').TransitionFade;
 
+var UserData = require('cqwrap/data').UserData;
+
 function putStone(stone, boardSprite, cursor){
-    var x = stone.x, y = stone.y, color = stone.type;
-    var stoneSprite = new BaseSprite(color+".png");
-    x = 437 - x * 43;
-    y = 40 + y * 43;
-    //console.log([x, y]);
-    stoneSprite.setAnchorPoint(cc.p(0.5, 0.5));
-    stoneSprite.setPosition(cc.p(x, y));
+    var color = stone.type;
+    var x = 437 - stone.x * 43,
+        y = 40 + stone.y * 43;
+
+    var stoneSprite = cc.createSprite(color + '.png', {
+            anchor: [0.5, 0.5],
+            xy: [x, y],
+        });
+
     boardSprite.addChild(TransitionFade.create(0.5, stoneSprite));
     stone.sprite = stoneSprite;
 
@@ -24,10 +28,13 @@ function putStone(stone, boardSprite, cursor){
         var cursorSprite = boardSprite.cursor;
         
         if(!boardSprite.cursor){
-            cursorSprite = new BaseSprite("cursor.png");
-            cursorSprite.setAnchorPoint(cc.p(0.5, 0.5));
-            cursorSprite.setPosition(cc.p(x, y));
-            boardSprite.addChild(cursorSprite, 10);
+            cursorSprite = cc.createSprite('cursor.png', {
+                anchor: [0.5, 0.5],
+                xy: [x, y],
+                zOrder: 10
+            });
+
+            boardSprite.addChild(cursorSprite);
             boardSprite.cursor = cursorSprite;
         }else{
             cursorSprite.setPosition(cc.p(x, y));
@@ -106,10 +113,14 @@ var WeiqiLayer = GameLayer.extend({
                 var mark = label[1];
                 x = 437 - pos[0] * 43;
                 y = 40 + pos[1] * 43;
-                var labelSprite = cc.LabelTTF.create(mark, "Arial", 16);
-                labelSprite.setAnchorPoint(cc.p(0.5, 0.5));
-                labelSprite.setPosition(cc.p(x, y));
-                labelSprite.setColor(cc.c3b(0, 0, 0));                 
+
+                var labelSprite = cc.createSprite("@"+mark, {
+                    fontFamily: "Arial",
+                    anchor: [0.5, 0.5],
+                    xy: [x, y],
+                    color: "#000",
+                });
+                
                 boardSprite.addChild(labelSprite); 
                 labelSprites.push(labelSprite);                             
             }
@@ -165,25 +176,34 @@ var LevelLayer = GameLayer.extend({
                         var name = "game_"+ (c % 8 + 1) + ".png";
                         var levelNormal = new BaseSprite(name);      
                         
-                        var labelId = cc.LabelTTF.create((c + 1), "Arial", 27);
-                        labelId.setAnchorPoint(cc.p(0.5, 0.5));
-                        labelId.setPosition(cc.p(60, 60));
-                        labelId.setColor(cc.c3b(0, 0, 0));                 
+                        var labelId = cc.createSprite('@'+(c + 1), {
+                            anchor: [0.5, 0.5],
+                            xy: [60, 60],
+                            color: '#000',
+                            fontSize: 27  
+                        });
+             
                         levelNormal.addChild(labelId);
 
                         if(c == level){
-                            var levelCurrent = new BaseSprite('selected.png');
-                            levelCurrent.setAnchorPoint(cc.p(0.5, 0.5));
-                            levelCurrent.setPosition(cc.p(65, 55));
+                            var levelCurrent = cc.createSprite('selected.png', {
+                                anchor: [0.5, 0.5],
+                                xy: [65, 55]
+                            });
+
                             levelNormal.addChild(levelCurrent);
                         }
 
-                        var score = self.parent.gameData[self.parent.mode].scores[c];
+                        var score = self.parent.gameData.scores[c];
                         if(score){
-                            var labelScore = cc.LabelTTF.create(score, "Arial", 19);
-                            labelScore.setAnchorPoint(cc.p(0, 0));
-                            labelScore.setPosition(cc.p(82, 82));
-                            labelScore.setColor(cc.c3b(155, 0, 0));                 
+                            var labelScore = cc.createSprite('@'+score, {
+                                fontFamily: 'Arial',
+                                fontSize: 19,
+                                anchor: [0, 0],
+                                xy: [82, 82],
+                                color: 'rgb(155, 0, 0)'
+                            });
+               
                             levelNormal.addChild(labelScore);
                         }
 
@@ -201,8 +221,11 @@ var LevelLayer = GameLayer.extend({
                             })(c)            
                         );
 
-                        menuItem.setAnchorPoint(cc.p(0, 0));
-                        menuItem.setPosition(cc.p(150 * j, 150 * (h - i) + 16));
+                        menuItem.setStyle({
+                            anchor: [0, 0],
+                            xy: [150 * j, 150 * (h - i) + 16]
+                        });
+
                         scrollLayer.addChild(menuItem);
                     }
                     if(Math.abs(level - c) < 9){
@@ -214,16 +237,18 @@ var LevelLayer = GameLayer.extend({
             }         
         }
 
-        
-        scrollView.setAnchorPoint(cc.p(0, 0));
-        scrollView.setPosition(cc.p(0, 122));
-        scrollView.setDirection(cc.SCROLLVIEW_DIRECTION_VERTICAL);
         var offset = scrollView.minContainerOffset();
         offset.y += ((level / 9) | 0) * 450;
-        scrollView.setContentOffset(offset);
 
-        this.addChild(scrollView, 1);
+        scrollView.setStyle({
+            anchor: [0, 0],
+            xy: [0, 122],
+            direction: cc.SCROLLVIEW_DIRECTION_VERTICAL,
+            contentOffset: offset,
+            zOrder: 1
+        });
 
+        this.addChild(scrollView);
         this.scrollView = scrollView;
     },
     onExit: function(){
@@ -240,14 +265,21 @@ var MainLayer = GameLayer.extend({
             this.commentLabel.setString(comment);
             return false;
         }
-        var label = cc.LabelTTF.create(comment, "Arial", 19);
-        label.setPosition(cc.p(35, 670));
-        label.setAnchorPoint(cc.p(0, 1.0));
-        label.setColor(cc.c3b(0, 0, 0)); 
-        label.setHorizontalAlignment(cc.TEXT_ALIGNMENT_LEFT);
-        label.setDimensions(cc.size(410, 80));
-        this.addChild(label, 15); 
-        this.commentLabel = label;  
+
+        var label = cc.createSprite('@'+comment, {
+            fontFamily: "Arial",
+            fontSize: 19,
+            xy: [35, 670],
+            anchor: [0, 1.0],
+            color: '#000',
+            textAlign: 'left',
+            size: [410, 80],
+            zOrder: 15
+        });
+
+        this.addChild(label); 
+        this.commentLabel = label;
+
         return true;     
     },
 
@@ -261,26 +293,38 @@ var MainLayer = GameLayer.extend({
 
         for(var i = 0; i < 3; i++){
             if(i < score){
-                var heart = new BaseSprite("heart-red.png");
-                heart.setPosition(cc.p(438 - i * 45, 700));
-                heart.setAnchorPoint(cc.p(0.5, 0.5));
-                this.scoreSprite.addChild(heart, 15); 
+                var heart = cc.createSprite("heart-red.png", {
+                    xy: [438 - i * 45, 700],
+                    anchor: [0.5, 0.5],
+                    zOrder: 15
+                });
+
+                this.scoreSprite.addChild(heart); 
             }else{
-                var heart = new BaseSprite("heart-grey.png");
-                heart.setPosition(cc.p(438 - i * 45, 700));
-                heart.setAnchorPoint(cc.p(0.5, 0.5));
-                this.scoreSprite.addChild(heart, 15); 
+                var heart = cc.createSprite("heart-grey.png", {
+                    xy: [438 - i * 45, 700],
+                    anchor: [0.5, 0.5],
+                    zOrder: 15                   
+                })
+
+                this.scoreSprite.addChild(heart); 
             }
         }
         this.addChild(this.scoreSprite, 15);
     },
 
     showScore: function(score){
-        var label = cc.LabelTTF.create(score, "Arial", 277);
-        label.setPosition(cc.p(235, 300));
-        label.setAnchorPoint(cc.p(0, 0));
-        label.setColor(cc.c3b(200, 0, 0)); 
-        this.addChild(label, 15); 
+        var label = cc.createSprite('@'+score, {
+            fontFamily: "Arial",
+            fontSize: 277,
+            xy: [235, 300],
+            anchor: [0, 0],
+            color: "rgb(200, 0, 0)",
+            zOrder: 15
+        });
+
+        this.addChild(label);
+
         this.scoreLabel = label;
 
         var effect = cc.MoveBy.create(0.5, cc._p(-150, 150) ),
@@ -289,8 +333,9 @@ var MainLayer = GameLayer.extend({
         label.runAction(effect);
         label.runAction(effect2);
 
-        this.gameData[this.mode].scores[this.level] = score;
-        sys.localStorage.setItem('gameData', JSON.stringify(this.gameData));
+
+        this.gameData.scores[this.level] = score;
+        UserData.set(this.mode, this.gameData);
     },
 
     goBack: function(){
@@ -354,23 +399,14 @@ var MainLayer = GameLayer.extend({
 
         this.mode = mode;
 
-        this.gameData = {
-            'easy':{current:0, scores:[]}, 
-            'normal':{current:0, scores:[]}, 
-            'hard':{current:0, scores:[]}
-        };
-
-        var gameData = sys.localStorage.getItem('gameData');
-        if(gameData){
-            this.gameData = JSON.parse(gameData);
-        } 
-
+        this.gameData = UserData.get(this.mode, {current:0, scores:[]}); 
         
         this.setTouchMode(cc.TOUCH_ONE_BY_ONE);
 
-        var bgBoard = new BaseSprite("bg-board.png");
-        bgBoard.setAnchorPoint(cc.p(0, 0));
-        bgBoard.setPosition(cc.p(0, 0));
+        var bgBoard = cc.createSprite('bg-board.png', {
+            anchor: [0, 0],
+            xy: [0, 0]
+        });
 
         var boardLayer = new GameLayer();
         boardLayer.setClickAndMove(false);
@@ -379,34 +415,40 @@ var MainLayer = GameLayer.extend({
         boardLayer.setClickAndMove(false);
         this.addChild(boardLayer);           
 
-        this.loadGame(this.gameData[this.mode].current);
+        this.loadGame(this.gameData.current);
 
-        var boardFrame = new BaseSprite("board-border.png");
-        boardFrame.setAnchorPoint(cc.p(0, 0));
-        boardFrame.setPosition(cc.p(0, 0));
-        this.addChild(TransitionFade.create(0.5, boardFrame), 1);
+        var boardFrame = cc.createSprite("board-border.png", {
+            anchor: [0, 0],
+            xy: [0, 0],
+            zOrder: 1
+        });
 
-        var nextButton = new Button('button-next.png', 
+        this.addChild(TransitionFade.create(0.5, boardFrame));
+
+        var nextButton = new Button({
+                texture: 'button-next.png',
+                anchor: [0, 0],
+                xy: [250, 5],
+                zOrder: 128
+            },
             function(){
                 Audio.playEffect('audio/btnclick.ogg');
                 self.goNext();
             });
 
-        var backButton = new Button('button-back.png', 
+        var backButton = new Button({
+                texture: 'button-back.png',
+                anchor: [0, 0],
+                xy: [10, 5],
+                zOrder: 128 
+            },
             function(){
                 Audio.playEffect('audio/btnclick.ogg');
                 self.goBack();
             });
         
-        //var size = cc.Director.getInstance().getWinSize();
-        
-        nextButton.setAnchorPoint(cc.p(0, 0));
-        nextButton.setPosition(250, 5);
-        this.addChild(nextButton, 128);
-
-        backButton.setAnchorPoint(cc.p(0, 0));
-        backButton.setPosition(cc.p(10, 5));
-        this.addChild(backButton, 128);
+        this.addChild(nextButton);
+        this.addChild(backButton);
 
         if(this.setKeypadEnabled){   
             this.setKeypadEnabled(true);
@@ -458,8 +500,10 @@ var MainLayer = GameLayer.extend({
     },
     onExit: function(){
         this._super();
-        this.gameData[this.mode].current = this.level;
-        sys.localStorage.setItem('gameData', JSON.stringify(this.gameData));
+
+        this.gameData.current = this.level;
+        UserData.set(this.mode, this.gameData);
+
         if(director.offsetY > 25){
             native.call('showAd');
         }

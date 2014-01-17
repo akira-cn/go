@@ -42,6 +42,9 @@ var styleMap = {
                 if(typeof value == 'string'){
                     value = str_to_arr(value);
                 }
+                if(typeof value == 'number'){
+                    value = [value, value];
+                }
                 if(value instanceof Array){
                     value = cc.p.apply(null, value);
                 }
@@ -410,6 +413,15 @@ var StyleManager = {
         }else{
             key = camelize(key);
             if(!styleMap[key]){
+                var setter = node[camelize('set-'+key)];
+                if(setter){
+                    try{
+                        setter.call(node, value);
+                        return true;
+                    }catch(ex){
+                        return false;
+                    }
+                }
                 return false;
             }
 
@@ -418,6 +430,14 @@ var StyleManager = {
     },
     getStyle: function(node, key){
         if(!styleMap[key]){
+            var getter = node[camelize('get-'+key)];
+            if(getter){
+                try{
+                    return getter.call(node);
+                }catch(ex){
+                    return null;
+                }
+            }
             return null;
         }
         return styleMap[key].get(node);
