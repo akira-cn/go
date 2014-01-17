@@ -1,1 +1,6 @@
-{}
+{
+    "docs"      : ["README.md", "docs"],
+    "title"  : "A cocos2d-x jsb lib",
+    "comment"  : "on",
+    "order"  : "number"
+}
