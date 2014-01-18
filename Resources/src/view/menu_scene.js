@@ -8,7 +8,7 @@ var BgLayer = require('cqwrap/layers').BgLayer,
 var BaseSprite = require('cqwrap/sprites').BaseSprite,
     BaseLabel = require('cqwrap/labels').BaseLabel;
 
-var Audio = require('cqwrap/audio').Audio;
+var Audio = require('cqwrap/audio');
 
 var MainLayer = GameLayer.extend({
 
@@ -39,6 +39,11 @@ var MainLayer = GameLayer.extend({
         var easyButton = new Button('button-easy.png',
             function(){
                 Audio.playEffect('audio/btnclick.ogg');
+                
+                //var MyScene = require('src/view/physics_scene');
+                //var playScene = new MyScene();
+                //director.pushScene(playScene);
+                
                 var playScene = new PlayScene('easy');
                 var scene = cc.TransitionFade.create(0.8, playScene);
                 director.pushScene(scene);            
@@ -95,9 +100,6 @@ var MainLayer = GameLayer.extend({
         this.addSprite(soundButton, {
                 'xy': [400, 40]
             });
-
-        var Box2D = require('cqwrap/box2d');
-        cc.log(Box2D);
 
         return true;  
     },

@@ -6,7 +6,7 @@ var BgLayer = require('cqwrap/layers').BgLayer,
     GameLayer = require('cqwrap/layers').GameLayer,
     BaseSprite = require('cqwrap/sprites').BaseSprite;
 
-var Audio = require('cqwrap/audio').Audio;
+var Audio = require('cqwrap/audio');
 var TransitionFade = require('cqwrap/transitions').TransitionFade;
 
 var UserData = require('cqwrap/data').UserData;
