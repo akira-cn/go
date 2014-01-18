@@ -96,6 +96,9 @@ var MainLayer = GameLayer.extend({
                 'xy': [400, 40]
             });
 
+        var Box2D = require('cqwrap/box2d');
+        cc.log(Box2D);
+
         return true;  
     },
 
