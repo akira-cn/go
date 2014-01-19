@@ -49,13 +49,17 @@ require(['cqwrap/index.js', 'src/resource.js', 'src/view/loading_scene.js'], fun
                 return false;
             }
             // initialize director
-            window.director = cc.Director.getInstance();
-
+            // There is a bug that cc.EGLView has to call cc.DIrector.getInstance first;
+            director &&
             cc.EGLView.getInstance().resizeWithBrowserSize(true);
             cc.EGLView.getInstance().setDesignResolutionSize(480, 800, cc.RESOLUTION_POLICY.SHOW_ALL);
 
             director.offsetY = 0;
-            
+
+            director.end = function(){
+                history.go(-1);
+            };
+
             // turn on display FPS
             // director.setDisplayStats(this.config['showFPS']);
 
