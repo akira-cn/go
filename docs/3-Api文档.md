@@ -165,7 +165,7 @@ var AnimationTask = require('cqwrap/animate').AnimationTask;
 
 var animTask = new AnimationTask(sprite);
 
-animTask.moveBy(0.5, cc.p(50, 50)).moveBy(0.5, cc.p(0, 100)).repeat(2).actOnce();
+animTask.moveBy(0.5, cc.p(50, 50)).moveBy(0.5, cc.p(0, 100)).repeatAll(2).actOnce();
 
 animTask.scaleBy(0.5, 0.2).actOnce();
 
