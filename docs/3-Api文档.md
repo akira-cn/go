@@ -155,4 +155,20 @@ touch事件的优先级顺序为先比较 Sprite 所在 Layer 的 zOrder， zOrd
 
 ```
 
+## 动画
+
+提供了好用的 AnimationTask 对象，用来代理Sprite的动画
+
+```js
+
+var AnimationTask = require('cqwrap/animate').AnimationTask;
+
+var animTask = new AnimationTask(sprite);
+
+animTask.moveBy(0.5, cc.p(50, 50)).moveBy(0.5, cc.p(0, 100)).repeatAll(2).actOnce();
+
+animTask.scaleBy(0.5, 0.2).actOnce();
+
+```
+
 ## 其他
