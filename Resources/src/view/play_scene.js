@@ -338,8 +338,8 @@ var MainLayer = GameLayer.extend({
         label.runAction(effect2);*/
 
         var animTask = new AnimTask(label);
-        animTask.moveBy(0.5, cc._p(-150, 150)).actOnce();   
-        animTask.scaleBy(0.5, 0.2).actOnce();
+        animTask.moveBy(0.5, cc._p(-150, 150)).act();   
+        animTask.reset().scaleBy(0.5, 0.2).act();
 
         this.gameData.scores[this.level] = score;
         UserData.set(this.mode, this.gameData);
