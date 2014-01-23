@@ -38,10 +38,10 @@ function clearAllTimers(target){
   cc.Director.getInstance().getScheduler().unscheduleAllCallbacksForTarget(target);
 }
 cc.Node.prototype.setTimeout = function (callback, interval) {
-  return setTimer(this||global, callback, interval, 0, 0, false);
+  return setTimer(this||global, callback, interval||0, 0, 0, false);
 };
 cc.Node.prototype.setInterval = function (callback, interval) {
-  return setTimer(this||global, callback, interval, cc.REPEAT_FOREVER, 0, false);
+  return setTimer(this||global, callback, interval||0, cc.REPEAT_FOREVER, 0, false);
 };
 cc.Node.prototype.clearAllTimers = function(){
   return clearAllTimers(this||global);
@@ -166,8 +166,20 @@ function isFunction(arg) {
 }
 cc.isFunction = isFunction;
 
-global.__defineGetter__('scene', function(){
+Object.defineProperty(global, 'director', {
+  get: function(){
+    return cc.Director.getInstance();
+  },
+  enumerable: true,
+  configurable: false,
+});
+
+Object.defineProperty(global, 'scene', {
+  get: function(){
     return cc.Director.getInstance().getRunningScene();
+  },     
+  enumerable: true,
+  configurable: false, 
 });
 
 })(this);

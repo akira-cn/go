@@ -1,6 +1,7 @@
 define(function(require, exports, module){
 
 var sgf = require('src/model/sgf.js');
+var EventEmitter = require('cqwrap/events').EventEmitter;
 
 //棋盘
 function initBoard(size){
@@ -22,7 +23,7 @@ function Weiqi(size){
 	this._forbid = {x:-1, y:-1};	//用来存放禁手点（打劫用）
 }
 
-cc.inherits(Weiqi, cc.EventEmitter);
+cc.inherits(Weiqi, EventEmitter);
 
 Weiqi.prototype.hasStone = function(x, y, type){
 	cc.Assert(this.valid(x, y), 'invalid position: ' + x + ',' + y);

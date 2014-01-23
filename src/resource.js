@@ -8,7 +8,7 @@ var g_resources = [
     {src:"res/game_map.png"},
     {src:"res/misc.png"},
     {src:"res/processor.png"},
-    
+
     //plist
     {src:"res/backgrounds.plist"},
     {src:"res/board_and_levels.plist"},

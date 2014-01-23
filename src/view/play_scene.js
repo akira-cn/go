@@ -1,27 +1,41 @@
 define(function(require, exports, module){
 
-var BgLayer = require('src/view/bg_layer.js');
-var Weiqi = require('src/model/weiqi.js');
+var Weiqi = require('src/model/weiqi');
+var Button = require('cqwrap/buttons').Button;
+var BgLayer = require('cqwrap/layers').BgLayer,
+    GameLayer = require('cqwrap/layers').GameLayer,
+    BaseSprite = require('cqwrap/sprites').BaseSprite;
+
+var Audio = require('cqwrap/audio');
+var TransitionFade = require('cqwrap/transitions').TransitionFade;
+var AnimTask = require('cqwrap/animate').AnimationTask;
+
+var UserData = require('cqwrap/data').UserData;
 
 function putStone(stone, boardSprite, cursor){
-    var x = stone.x, y = stone.y, color = stone.type;
-    var stoneSprite = cc.Sprite.createWithSpriteFrameName(color+".png");
-    x = 437 - x * 43;
-    y = 40 + y * 43;
-    //console.log([x, y]);
-    stoneSprite.setAnchorPoint(cc.p(0.5, 0.5));
-    stoneSprite.setPosition(cc.p(x, y));
-    boardSprite.addChild(SpriteFadeInTR.create(0.5, stoneSprite));
+    var color = stone.type;
+    var x = 437 - stone.x * 43,
+        y = 40 + stone.y * 43;
+
+    var stoneSprite = cc.createSprite(color + '.png', {
+            anchor: [0.5, 0.5],
+            xy: [x, y],
+        });
+
+    boardSprite.addChild(TransitionFade.create(0.5, stoneSprite));
     stone.sprite = stoneSprite;
 
     if(cursor){
         var cursorSprite = boardSprite.cursor;
         
         if(!boardSprite.cursor){
-            cursorSprite = cc.Sprite.createWithSpriteFrameName("cursor.png");
-            cursorSprite.setAnchorPoint(cc.p(0.5, 0.5));
-            cursorSprite.setPosition(cc.p(x, y));
-            boardSprite.addChild(cursorSprite, 10);
+            cursorSprite = cc.createSprite('cursor.png', {
+                anchor: [0.5, 0.5],
+                xy: [x, y],
+                zOrder: 10
+            });
+
+            boardSprite.addChild(cursorSprite);
             boardSprite.cursor = cursorSprite;
         }else{
             cursorSprite.setPosition(cc.p(x, y));
@@ -37,18 +51,19 @@ function putStone(stone, boardSprite, cursor){
     return stoneSprite;   
 }
 
-var WeiqiLayer = cc.Layer.extend({
-    ctor: function(parent){
+var WeiqiLayer = GameLayer.extend({
+
+    init: function(parent){
+
         this._super();
         this.parent = parent;
-        cc.associateWithNative( this, cc.Layer );        
-    },
 
-    init: function(){
-        var boardSprite = cc.Sprite.createWithSpriteFrameName("board.png");
-        boardSprite.setAnchorPoint(cc.p(0, 0));
-        boardSprite.setPosition(cc.p(5, 110));
-        this.addChild(SpriteFadeInTR.create(0.5, boardSprite, 150));
+        var boardSprite = new BaseSprite("board.png");
+        this.addSprite(TransitionFade.create(0.5, boardSprite, 150), {
+                x: 5,
+                y: 110,
+                anchor: [0, 0],
+            });
 
         var self = this;
 
@@ -99,10 +114,14 @@ var WeiqiLayer = cc.Layer.extend({
                 var mark = label[1];
                 x = 437 - pos[0] * 43;
                 y = 40 + pos[1] * 43;
-                var labelSprite = cc.LabelTTF.create(mark, "Arial", 16);
-                labelSprite.setAnchorPoint(cc.p(0.5, 0.5));
-                labelSprite.setPosition(cc.p(x, y));
-                labelSprite.setColor(cc.c3b(0, 0, 0));                 
+
+                var labelSprite = cc.createSprite("@"+mark, {
+                    fontFamily: "Arial",
+                    anchor: [0.5, 0.5],
+                    xy: [x, y],
+                    color: "#000",
+                });
+                
                 boardSprite.addChild(labelSprite); 
                 labelSprites.push(labelSprite);                             
             }
@@ -119,39 +138,29 @@ var WeiqiLayer = cc.Layer.extend({
     }
 });
 
-var LevelLayer = cc.Layer.extend({
-    ctor:function(parent){
+var LevelLayer = GameLayer.extend({
+
+    init:function(parent){
         this._super();
         this.parent = parent;
-        cc.associateWithNative( this, cc.Layer );
-    },
-    init:function(){
-        //this.parent.setAnchorPoint(cc.p(0.5, 0.5));
-        //var effect = cc.ScaleBy.create(0.5, 1.15);
-        //this.parent.setScale(1.15);
-        //this.parent.runAction(effect);
+
         var self = this;
 
         var layer = cc.LayerColor.create(cc.c4b(0, 0, 0, 128));
         this.addChild(layer);
 
-        var levelsBg = cc.Sprite.createWithSpriteFrameName('bg-levels.png');
-        levelsBg.setAnchorPoint(cc.p(0, 0));
-        this.addChild(levelsBg);
+        this.addSprite('bg-levels.png', {
+                anchor: [0, 0]
+            });
 
         var mode = this.parent.mode;
         var n = WeiqiData[mode].length -  1,
             h = (n / 3) | 0;
 
-        var container = cc.Layer.create();
-        container.setAnchorPoint(cc.p(0, 0));
-        container.setPosition(cc.p(0, 0));
-        container.setContentSize(cc.size(450, 150 * (h+1)));
+        var ScrollView = require('cqwrap/scroll.js').ScrollView;
 
-        var menu = cc.Menu.create();
-        menu.setAnchorPoint(cc.p(0, 0));
-        menu.setPosition(cc.p(0,  150 * h + 22));
-        container.addChild(menu);
+        var scrollView = ScrollView.create(cc.size(480, 441), cc.size(450, 150 * (h+1)));
+        var scrollLayer = scrollView.getContentLayer();
 
         var level = self.parent.level;
         //cc.log(offset);
@@ -166,65 +175,59 @@ var LevelLayer = cc.Layer.extend({
 
                     function f(){
                         var name = "game_"+ (c % 8 + 1) + ".png";
-                        var levelNormal = cc.Sprite.createWithSpriteFrameName(name);
-                        var levelSelected = cc.Sprite.createWithSpriteFrameName(name);
-                            levelSelected.setScaleY(0.9);
-                            levelSelected.setOpacity(180);        
+                        var levelNormal = new BaseSprite(name);      
                         
-                        var labelId = cc.LabelTTF.create((c + 1), "Arial", 27);
-                        labelId.setAnchorPoint(cc.p(0.5, 0.5));
-                        labelId.setPosition(cc.p(60, 60));
-                        labelId.setColor(cc.c3b(0, 0, 0));                 
+                        var labelId = cc.createSprite('@'+(c + 1), {
+                            anchor: [0.5, 0.5],
+                            xy: [60, 60],
+                            color: '#000',
+                            fontSize: 27  
+                        });
+             
                         levelNormal.addChild(labelId);
 
                         if(c == level){
-                            var levelCurrent = cc.Sprite.createWithSpriteFrameName('selected.png');
-                            levelCurrent.setAnchorPoint(cc.p(0.5, 0.5));
-                            levelCurrent.setPosition(cc.p(65, 55));
+                            var levelCurrent = cc.createSprite('selected.png', {
+                                anchor: [0.5, 0.5],
+                                xy: [65, 55]
+                            });
+
                             levelNormal.addChild(levelCurrent);
                         }
 
-                        labelId = cc.LabelTTF.create((c + 1), "Arial", 27);
-                        labelId.setAnchorPoint(cc.p(0.5, 0.5));
-                        labelId.setPosition(cc.p(60, 60));
-                        labelId.setColor(cc.c3b(0, 0, 0));                 
-                        levelSelected.addChild(labelId);
-
-                        var score = self.parent.gameData[self.parent.mode].scores[c];
+                        var score = self.parent.gameData.scores[c];
                         if(score){
-                            var labelScore = cc.LabelTTF.create(score, "Arial", 19);
-                            labelScore.setAnchorPoint(cc.p(0, 0));
-                            labelScore.setPosition(cc.p(82, 82));
-                            labelScore.setColor(cc.c3b(155, 0, 0));                 
+                            var labelScore = cc.createSprite('@'+score, {
+                                fontFamily: 'Arial',
+                                fontSize: 19,
+                                anchor: [0, 0],
+                                xy: [82, 82],
+                                color: 'rgb(155, 0, 0)'
+                            });
+               
                             levelNormal.addChild(labelScore);
                         }
 
-                        var menuItem = cc.MenuItemSprite.create(
+                        var menuItem = new Button(
                             levelNormal,
-                            levelSelected,
                             (function(c){
-                                return function() {
-                                    var offset = scrollView.getContentOffset();
-                                    var duce = Math.abs(Math.abs(offset.y) - Math.abs(oldOffset.y));
-                                    oldOffset = offset;
-                                    //如果移动大于10px，则为移动
-                                    if (duce > 10) {
-                                        return true;
-                                    };
+                                return function(item) {
+
                                     self.parent.loadGame(c);
                                     self.removeFromParent(true);
                                     self.parent.levelLayer = null;
 
                                     Audio.playEffect('audio/submenu_click.ogg');
                                 }
-                            })(c), 
-                            self                
+                            })(c)            
                         );
-                        menuItem.setAnchorPoint(cc.p(0, 0));
-                        menuItem.setPosition(cc.p(150 * j, - 150 * i));
 
-                        menu.addChild(menuItem);  
+                        menuItem.setStyle({
+                            anchor: [0, 0],
+                            xy: [150 * j, 150 * (h - i) + 16]
+                        });
 
+                        scrollLayer.addChild(menuItem);
                     }
                     if(Math.abs(level - c) < 9){
                         f();
@@ -235,29 +238,19 @@ var LevelLayer = cc.Layer.extend({
             }         
         }
 
-        var scrollView = cc.ScrollView.create(cc.size(480, 441), container);
-        scrollView.setAnchorPoint(cc.p(0, 0));
-        scrollView.setPosition(cc.p(0, 122));
-        scrollView.setDirection(cc.SCROLLVIEW_DIRECTION_VERTICAL);
         var offset = scrollView.minContainerOffset();
         offset.y += ((level / 9) | 0) * 450;
-        //offset.y += Math.min(h - 2, Math.max(0, ((level / 3) | 0) - 1)) * 300;
-        scrollView.setContentOffset(offset);
+
+        scrollView.setStyle({
+            anchor: [0, 0],
+            xy: [0, 122],
+            direction: cc.SCROLLVIEW_DIRECTION_VERTICAL,
+            contentOffset: offset,
+            zOrder: 1
+        });
 
         this.addChild(scrollView);
-
-        var oldOffset = scrollView.getContentOffset();
-        //cc.log([oldOffset.x, oldOffset.y]);
-
         this.scrollView = scrollView;
-
-        this.resetOffset = function(){
-            oldOffset = scrollView.getContentOffset();
-        }
-
-        this.setTimeout(function(){
-             menu.setHandlerPriority(1);
-        },0);
     },
     onExit: function(){
         this._super();
@@ -266,26 +259,28 @@ var LevelLayer = cc.Layer.extend({
 });
 
 
-var MainLayer = cc.Layer.extend({
-    ctor:function(mode){
-        this._super();
-        this.mode = mode;
-        cc.associateWithNative( this, cc.Layer );
-    },
+var MainLayer = GameLayer.extend({
 
     setComment:function(comment){
         if(this.commentLabel){
             this.commentLabel.setString(comment);
             return false;
         }
-        var label = cc.LabelTTF.create(comment, "Arial", 19);
-        label.setPosition(cc.p(35, 670));
-        label.setAnchorPoint(cc.p(0, 1.0));
-        label.setColor(cc.c3b(0, 0, 0)); 
-        label.setHorizontalAlignment(cc.TEXT_ALIGNMENT_LEFT);
-        label.setDimensions(cc.size(410, 80));
-        this.addChild(label, 15); 
-        this.commentLabel = label;  
+
+        var label = cc.createSprite('@'+comment, {
+            fontFamily: "Arial",
+            fontSize: 19,
+            xy: [35, 670],
+            anchor: [0, 1.0],
+            color: '#000',
+            textAlign: 'left',
+            size: [410, 80],
+            zOrder: 15
+        });
+
+        this.addChild(label); 
+        this.commentLabel = label;
+
         return true;     
     },
 
@@ -295,39 +290,59 @@ var MainLayer = cc.Layer.extend({
             this.removeChild(this.scoreSprite, true);
             this.scoreSprite = null;
         }
-        this.scoreSprite = cc.Sprite.create();
+        this.scoreSprite = new BaseSprite();
 
         for(var i = 0; i < 3; i++){
             if(i < score){
-                var heart = cc.Sprite.createWithSpriteFrameName("heart-red.png");
-                heart.setPosition(cc.p(438 - i * 45, 700));
-                heart.setAnchorPoint(cc.p(0.5, 0.5));
-                this.scoreSprite.addChild(heart, 15); 
+                var heart = cc.createSprite("heart-red.png", {
+                    xy: [438 - i * 45, 700],
+                    anchor: [0.5, 0.5],
+                    zOrder: 15
+                });
+
+                this.scoreSprite.addChild(heart); 
             }else{
-                var heart = cc.Sprite.createWithSpriteFrameName("heart-grey.png");
-                heart.setPosition(cc.p(438 - i * 45, 700));
-                heart.setAnchorPoint(cc.p(0.5, 0.5));
-                this.scoreSprite.addChild(heart, 15); 
+                var heart = cc.createSprite("heart-grey.png", {
+                    xy: [438 - i * 45, 700],
+                    anchor: [0.5, 0.5],
+                    zOrder: 15                   
+                })
+
+                this.scoreSprite.addChild(heart); 
             }
         }
         this.addChild(this.scoreSprite, 15);
     },
 
     showScore: function(score){
-        var label = cc.LabelTTF.create(score, "Arial", 277);
-        label.setPosition(cc.p(235, 300));
-        label.setAnchorPoint(cc.p(0, 0));
-        label.setColor(cc.c3b(200, 0, 0)); 
-        this.addChild(label, 15); 
+        var label = cc.createSprite('@'+score, {
+            fontFamily: "Arial",
+            fontSize: 277,
+            xy: [235, 300],
+            anchor: [0, 0],
+            color: "rgb(200, 0, 0)",
+            zOrder: 15
+        });
+
+        this.addChild(label);
+
         this.scoreLabel = label;
 
-        var effect = cc.MoveBy.create(0.5, cc._p(-150, 150) ),
+        /*var effect = cc.MoveBy.create(0.5, cc._p(-150, 150) ),
             effect2 = cc.ScaleBy.create(0.5, 0.2);
-        label.runAction(effect);
-        label.runAction(effect2);
 
-        this.gameData[this.mode].scores[this.level] = score;
-        sys.localStorage.setItem('gameData', JSON.stringify(this.gameData));
+        var callback = cc.CallFunc.create(function(){
+            console.log('ok');
+        }, this);
+        label.runAction(cc.Sequence.create(effect, callback));
+        label.runAction(effect2);*/
+
+        var animTask = new AnimTask(label);
+        animTask.moveBy(0.5, cc._p(-150, 150)).act();   
+        animTask.reset().scaleBy(0.5, 0.2).act();
+
+        this.gameData.scores[this.level] = score;
+        UserData.set(this.mode, this.gameData);
     },
 
     goBack: function(){
@@ -350,7 +365,6 @@ var MainLayer = cc.Layer.extend({
             this.levelLayer = null;
         }else{
             var levelLayer = new LevelLayer(this);
-            levelLayer.init();
             this.addChild(levelLayer, 30);
             this.levelLayer = levelLayer;
         }
@@ -358,8 +372,8 @@ var MainLayer = cc.Layer.extend({
 
     loadGame: function(level){
 
-        if(cc.offsetY > 25){
-            cc.native.call('showAd');
+        if(director.offsetY > 25){
+            native.call('showAd');
         }
 
         level = level || 0;
@@ -367,7 +381,6 @@ var MainLayer = cc.Layer.extend({
 
         if(!this.weiqi){
             var weiqiLayer = new WeiqiLayer(this);
-            weiqiLayer.init();
             this.addChild(weiqiLayer);
             this.weiqi = weiqiLayer.weiqi;
         }
@@ -386,154 +399,139 @@ var MainLayer = cc.Layer.extend({
         this.gameInit = true;
     },
 
-    init:function () {
+    init:function (mode) {
+        this._super();
 
         var self = this;
-        this.gameData = {
-            'easy':{current:0, scores:[]}, 
-            'normal':{current:0, scores:[]}, 
-            'hard':{current:0, scores:[]}
-        };
 
-        var gameData = sys.localStorage.getItem('gameData');
-        if(gameData){
-            this.gameData = JSON.parse(gameData);
-        } 
+        this.mode = mode;
 
-        this._super();
+        this.gameData = UserData.get(this.mode, {current:0, scores:[]}); 
+        
         this.setTouchMode(cc.TOUCH_ONE_BY_ONE);
 
-       // this.setTimeout(function(){
-            var bgBoard = cc.Sprite.createWithSpriteFrameName("bg-board.png");
-            bgBoard.setAnchorPoint(cc.p(0, 0));
-            bgBoard.setPosition(cc.p(0, 0));
-            self.addChild(SpriteFadeInTR.create(0.5, bgBoard), 0);           
+        var bgBoard = cc.createSprite('bg-board.png', {
+            anchor: [0, 0],
+            xy: [0, 0]
+        });
 
-            self.loadGame(self.gameData[self.mode].current);
+        var boardLayer = new GameLayer();
+        boardLayer.addChild(TransitionFade.create(0.5, bgBoard));
+        boardLayer.delegate(bgBoard);
+        boardLayer.setClickAndMove(false);
+        this.addChild(boardLayer);           
 
-            var boardFrame = cc.Sprite.createWithSpriteFrameName("board-border.png");
-            boardFrame.setAnchorPoint(cc.p(0, 0));
-            boardFrame.setPosition(cc.p(0, 0));
-            self.addChild(SpriteFadeInTR.create(0.5, boardFrame), 1);
+        this.loadGame(this.gameData.current);
 
-            var nextButton = MenuButton.create('button-next.png', self, function(){
+        var boardFrame = cc.createSprite("board-border.png", {
+            anchor: [0, 0],
+            xy: [0, 0],
+            zOrder: 1
+        });
+
+        this.addChild(TransitionFade.create(0.5, boardFrame));
+
+        var nextButton = new Button({
+                texture: 'button-next.png',
+                anchor: [0, 0],
+                xy: [250, 5],
+                zOrder: 128
+            },
+            function(){
+                Audio.playEffect('audio/btnclick.ogg');
                 self.goNext();
             });
 
-            var backButton = MenuButton.create('button-back.png', self, function(){
+        var backButton = new Button({
+                texture: 'button-back.png',
+                anchor: [0, 0],
+                xy: [10, 5],
+                zOrder: 128 
+            },
+            function(){
+                Audio.playEffect('audio/btnclick.ogg');
                 self.goBack();
             });
-            
-            //var size = cc.Director.getInstance().getWinSize();
-
-            var menu = cc.Menu.create(nextButton, backButton);
-            menu.setPosition(cc.p(0, 0));
-            self.addChild(menu, 128);
-            menu.setHandlerPriority(-1000);
-
-            nextButton.setAnchorPoint(cc.p(0, 0));
-            nextButton.setPosition(250, 5);
-
-            backButton.setAnchorPoint(cc.p(0, 0));
-            backButton.setPosition(cc.p(10, 5));
-      //  }, 800);
+        
+        this.addChild(nextButton);
+        this.addChild(backButton);
 
         if(this.setKeypadEnabled){   
             this.setKeypadEnabled(true);
         }
 
+        bgBoard.on('touchstart', function(touch){
+            if(self.levelLayer){
+                var touchLocation = touch.getLocation();
+                var scrollView = self.levelLayer.scrollView;
+
+                var local = scrollView.convertToNodeSpace(touchLocation);
+
+                var r = cc.rect(0, 0, 480, 441);
+                //cc.log([local.x, local.y]);
+                if (cc.rectContainsRect(r, local)) {
+                    touch.preventDefault();
+                }      
+            }
+        });
+
+        bgBoard.on('click', function(touch){
+            if(self.gameover || self.levelLayer){
+                return;
+            }
+            var touchLocation = touch.getLocation();
+            touchLocation = self.convertToNodeSpace(touchLocation);
+            var x = Math.round((441 - touchLocation.x) / 43),
+                y = Math.round((touchLocation.y - 145) / 43);
+
+            if(x <= 10 && y <= 10){
+                if(!self.weiqi.hasStone(x,y)){
+                    self.weiqi.proceed(x, y);
+                    if(director.offsetY > 25){
+                        native.call('hideAd');
+                    }
+                    self.gameInit = false;
+                    self.unregisterDelegate();
+                    self.setTimeout(function(){
+                        self.registerDelegate();
+                    }, 500);
+                }
+            }
+        });
+
         return true;
     },
     onEnter: function(){
         this._super();
-        cc.registerTargetedDelegate(0, true, this);
     },
     onExit: function(){
         this._super();
-        this.gameData[this.mode].current = this.level;
-        sys.localStorage.setItem('gameData', JSON.stringify(this.gameData));
-        this.clearAllTimers();
-        cc.unregisterTouchDelegate(this);
-        if(cc.offsetY > 25){
-            cc.native.call('showAd');
+
+        this.gameData.current = this.level;
+        UserData.set(this.mode, this.gameData);
+
+        if(director.offsetY > 25){
+            native.call('showAd');
         }
     },
     backClicked: function(){
-        //cc.Director.getInstance().end();
         this.goBack();
     },
-    onTouchBegan:function (touch, event) {
-        //cc.log('touchBegain');
-        if(this.levelLayer){
-            var touchLocation = touch.getLocation();
-            var scrollView = this.levelLayer.scrollView;
-
-            this.levelLayer.resetOffset();
-
-            var local = scrollView.convertToNodeSpace(touchLocation);
-
-            var r = cc.rect(0, 0, 480, 441);
-            //cc.log([local.x, local.y]);
-            if (cc.rectContainsRect(r, local)) {
-                return false;
-            }else{
-                return true;
-            }         
-        }
-        return true;
-    },
-    onTouchEnded: function(touch, event){
-        if(this.gameover || this.levelLayer){
-            return;
-        }
-        var touchLocation = touch.getLocation();
-        touchLocation = this.convertToNodeSpace(touchLocation);
-        var x = Math.round((441 - touchLocation.x) / 43),
-            y = Math.round((touchLocation.y - 145) / 43);
-        var self = this;
-
-        if(x <= 10 && y <= 10){
-            //console.log('>>>' + [x, y]);
-            if(!this.weiqi.hasStone(x,y)){
-                this.weiqi.proceed(x, y);
-                if(cc.offsetY > 25){
-                    cc.native.call('hideAd');
-                }
-                this.gameInit = false;
-                cc.unregisterTouchDelegate(this);
-                this.setTimeout(function(){
-                    cc.registerTargetedDelegate(0, true, self);
-                }, 500);
-            }/*else{
-                cc.log(JSON.stringify(this.weiqi.getJointStones(x,y)));
-            }*/
-        }
-        //cc.log([touchLocation.x, touchLocation.y, x, y]);
-    }
 });
 
-var PlayScene = cc.Scene.extend({
-    ctor:function(mode) {
-        this._super();
-        this.mode = mode;
-        cc.associateWithNative( this, cc.Scene );
-    },
+var BaseScene = require('cqwrap/scenes.js').BaseScene;
 
-    onEnter:function () {
+var PlayScene = BaseScene.extend({
+
+    init:function (mode) {
         this._super();
 
         var bg = new BgLayer('bg-play.png');
         this.addChild(bg);
-        bg.init();
-
-        cc.offsetY = cc.offsetY || 0;
         
-        var main = new MainLayer(this.mode);
-        main.setAnchorPoint(cc.p(0, 0));
-        main.setPosition(cc.p(0, cc.offsetY));
-        this.addChild(main);
-        main.init();
-    }
+        var main = new MainLayer(mode);
+        this.addChild(main, 1);
+    },
 });
 
 module.exports = PlayScene;

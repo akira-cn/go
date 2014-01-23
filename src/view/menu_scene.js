@@ -1,101 +1,120 @@
 define(function(require, exports, module){
 
-var BgLayer = require('src/view/bg_layer.js');
-var PlayScene = require('src/view/play_scene.js');
+var PlayScene = require('src/view/play_scene');
+var Button = require('cqwrap/buttons').Button;
+var BgLayer = require('cqwrap/layers').BgLayer,
+    GameLayer = require('cqwrap/layers').GameLayer;
 
-var MainLayer = cc.Layer.extend({
-    ctor:function(){
-        this._super();
-        cc.associateWithNative( this, cc.Layer );
-    },
+var BaseSprite = require('cqwrap/sprites').BaseSprite,
+    BaseLabel = require('cqwrap/labels').BaseLabel;
+
+var Audio = require('cqwrap/audio');
+
+var MainLayer = GameLayer.extend({
 
     init: function(){
-        var logoSprite = cc.Sprite.createWithSpriteFrameName('logo.png');
-        logoSprite.setAnchorPoint(cc.p(0, 1.0));
-        logoSprite.setPosition(cc.p(0, 800));
-        this.addChild(logoSprite);
+        this._super();     
 
-        var easyButton = MenuButton.create('button-easy.png', this, function(){
-            var playScene = new PlayScene('easy');
-            var scene = cc.TransitionFade.create(0.8, playScene);
-            director.pushScene(scene);
+        this.addSprite({
+            'texture': 'logo.png',
+            'anchor': [0.5, 0.5],
+            'xy': [240, 636],
+            'z-order': 0,
         });
 
-        var normalButton = MenuButton.create('button-normal.png', this, function(){
-            var playScene = new PlayScene('normal');
-            var scene = cc.TransitionFade.create(0.8, playScene);
-            director.pushScene(scene);
-        });
+        /*this.addSprite("@Hello World", {
+            'anchor': [0, 1.0],
+            'x': 0,
+            'y': 600,
+            'color': '#f00',
+            'font-size': 55,
+            'font-family': 'Times New Roman',
+            'text-align': 'center',
+            'v-align': 'middle',
+            'width': 480,
+            'scale': 0.6,
+            'rotate': 30,
+        });*/
 
-        var hardButton = MenuButton.create('button-hard.png', this, function(){
-            var playScene = new PlayScene('hard');
-            var scene = cc.TransitionFade.create(0.8, playScene);
-            director.pushScene(scene);
-        });
+        var easyButton = new Button('button-easy.png',
+            function(){
+                Audio.playEffect('audio/btnclick.ogg');
+                var playScene = new PlayScene('easy');
+                var scene = cc.TransitionFade.create(0.8, playScene);
+                director.pushScene(scene);            
+            });
 
-        var gameSettings = sys.localStorage.getItem('gameSettings');
-        if(gameSettings){
-            gameSettings = JSON.parse(gameSettings);
-        }else{
-            gameSettings = {sound: 1};
-        }
+        this.addSprite(easyButton, {
+                'xy': [240, 355],
+                'anchor': [0.5, 0],
+            });
+
+        var normalButton = new Button('button-normal.png',
+            function(){
+                Audio.playEffect('audio/btnclick.ogg');
+                var playScene = new PlayScene('normal');
+                var scene = cc.TransitionFade.create(0.8, playScene);
+                director.pushScene(scene);                
+            });
+
+        this.addSprite(normalButton, {
+                'xy': [240, 230],
+                'anchor': [0.5, 0],
+            });
+
+
+        var hardButton = new Button('button-hard.png', 
+            function(){
+                Audio.playEffect('audio/btnclick.ogg');
+                var playScene = new PlayScene('hard');
+                var scene = cc.TransitionFade.create(0.8, playScene);
+                director.pushScene(scene);
+            });
+
+        this.addSprite(hardButton, {
+                'xy': [240, 105],
+                'anchor': [0.5, 0],
+            });
+
+        var GameSettings = require('cqwrap/data').GameSettings;
+        var enabelSound = GameSettings.get('sound', 1);
+
+        Audio.setEnable(enabelSound);
 
         var sound_btn_pic = ['btn_sound_disabled.png', 'btn_sound.png']
 
-        var soundButton = MenuButton.create(sound_btn_pic[gameSettings.sound], this, function(item){
-            //cc.log(item);
-            gameSettings.sound = !gameSettings.sound - 0;
-            Audio.setEnable(gameSettings.sound);
-            item.setNormalImage(cc.Sprite.createWithSpriteFrameName(sound_btn_pic[gameSettings.sound]));
-            sys.localStorage.setItem('gameSettings', JSON.stringify(gameSettings));
-        });  
+        var soundButton = new Button(sound_btn_pic[enabelSound], 
+            function(touch, item){
+                Audio.playEffect('audio/btnclick.ogg');
+                enabelSound = !enabelSound - 0;
+                Audio.setEnable(enabelSound);
+                item.setContentSprite(cc.Sprite.createWithSpriteFrameName(sound_btn_pic[enabelSound]));
+                GameSettings.set('sound', enabelSound);
+            });  
 
-        Audio.setEnable(gameSettings.sound);
+        this.addSprite(soundButton, {
+                'xy': [400, 40]
+            });
 
-        var menu = cc.Menu.create(easyButton, normalButton, hardButton, soundButton);
-        menu.setPosition(cc.p(0, 0));
-        this.addChild(menu, 128); 
-
-        easyButton.setAnchorPoint(cc.p(0.5, 0));
-        easyButton.setPosition(240, 355); 
-
-        normalButton.setAnchorPoint(cc.p(0.5, 0));
-        normalButton.setPosition(240, 230);
-
-        hardButton.setAnchorPoint(cc.p(0.5, 0));
-        hardButton.setPosition(240, 105);
-
-        soundButton.setAnchorPoint(cc.p(0, 0));
-        soundButton.setPosition(400, 40);
-
-        if(this.setKeypadEnabled){   
-            this.setKeypadEnabled(true);
-        }
-        
         return true;  
     },
 
     backClicked: function(){
-        cc.Director.getInstance().end();
+        director.end();
         //director.popScene();
     }
 });
 
-var MenuScene = cc.Scene.extend({
-    ctor:function() {
-        this._super();
-        cc.associateWithNative( this, cc.Scene );
-    },
+var BaseScene = require('cqwrap/scenes.js').BaseScene;
 
-    onEnter:function () {
+var MenuScene = BaseScene.extend({
+    init:function () {
         this._super();
         var bg = new BgLayer('bg-menu.png');
         this.addChild(bg);
-        bg.init();
 
         var main = new MainLayer();
         this.addChild(main);
-        main.init();
     }
 });
 

@@ -4,12 +4,16 @@
     var _moduleStack = [];
 
     function _require(mod){
+        
+        mod = mod.replace(/\.js$/, '');
+
         if(!_modCache[mod]){
             _moduleStack.push({exports:{}});
-            require(mod);
+            require(mod + '.js');
             _modCache[mod] = module.exports;
             _moduleStack.pop();
         }
+        
         return _modCache[mod];
     }
 
@@ -28,7 +32,7 @@
             module.use++;
             return module;
         },
-        enumerable: false,
+        enumerable: true,
         configurable: false,    
     }); 
 
@@ -36,7 +40,7 @@
         get: function(){
             return module.exports;
         },
-        enumerable: false,
+        enumerable: true,
         configurable: false,
     });
 
