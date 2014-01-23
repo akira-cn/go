@@ -54,6 +54,9 @@ require(['cqwrap/index.js', 'src/resource.js', 'src/view/loading_scene.js'], fun
             cc.EGLView.getInstance().resizeWithBrowserSize(true);
             cc.EGLView.getInstance().setDesignResolutionSize(480, 800, cc.RESOLUTION_POLICY.SHOW_ALL);
 
+            //var size = director.getWinSize();
+            //alert([size.width, size.height]);
+
             director.offsetY = 0;
 
             director.end = function(){

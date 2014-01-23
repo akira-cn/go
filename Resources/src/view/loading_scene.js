@@ -41,7 +41,6 @@ var LoadingScene = CCLoadingScene.extend({
         var progress_box = cc.Sprite.create();
         progress_box.setAnchorPoint(cc.p(0, 0));
         progress_box.setPosition(cc.p((winSize.width - 359) / 2, 87));
-        progress_box.setContentSize(cc.size(359, 16));
 
         var leftSprite = cc.Sprite.createWithTexture(progress_box_texture, cc.rect(0, 0, 10, 16));
         leftSprite.setAnchorPoint(cc.p(0, 0));
