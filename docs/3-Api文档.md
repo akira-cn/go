@@ -163,7 +163,7 @@ touch事件的优先级顺序为先比较 Sprite 所在 Layer 的 zOrder， zOrd
 
 sprite.moveBy(0.5, cc.p(50, 50)).moveBy(0.5, cc.p(0, 100)).repeatAll(2).act();
 
-sprite.clearActions().scaleBy(0.5, 0.2).act();
+sprite.scaleBy(0.5, 0.2).act();
 
 ```
 
