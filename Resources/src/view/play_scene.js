@@ -8,7 +8,6 @@ var BgLayer = require('cqwrap/layers').BgLayer,
 
 var Audio = require('cqwrap/audio');
 var TransitionFade = require('cqwrap/transitions').TransitionFade;
-var AnimTask = require('cqwrap/animate').AnimationTask;
 
 var UserData = require('cqwrap/data').UserData;
 
@@ -337,9 +336,8 @@ var MainLayer = GameLayer.extend({
         label.runAction(cc.Sequence.create(effect, callback));
         label.runAction(effect2);*/
 
-        var animTask = new AnimTask(label);
-        animTask.moveBy(0.5, cc._p(-150, 150)).act();   
-        animTask.reset().scaleBy(0.5, 0.2).act();
+        label.moveBy(0.5, cc._p(-150, 150)).act();   
+        label.clearActions().scaleBy(0.5, 0.2).act();
 
         this.gameData.scores[this.level] = score;
         UserData.set(this.mode, this.gameData);
