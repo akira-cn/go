@@ -163,7 +163,7 @@ touch事件的优先级顺序为先比较 Sprite 所在 Layer 的 zOrder， zOrd
 
 ```js
 
-sprite.moveBy(0.5, cc.p(50, 50)).moveBy(0.5, cc.p(0, 100)).repeatAll(2).act();
+sprite.moveBy(0.5, cc.p(50, 50)).moveBy(0.5, cc.p(0, 100)).repeat(2).act();
 
 sprite.scaleBy(0.5, 0.2).act();
 
@@ -177,7 +177,7 @@ var AnimationTask = require('cqwrap/animate').AnimationTask;
 
 var task = new AnimationTask();
 
-task.moveBy(0.5, cc.p(50, 50)).moveBy(0.5, cc.p(0, 100)).repeatAll(2);
+task.moveBy(0.5, cc.p(50, 50)).moveBy(0.5, cc.p(0, 100)).repeat(2);
 
 [sprite1, sprite2, sprite3].forEach(function(o){
     //这样使用能避免创建多个同样的动画对象，提升性能
