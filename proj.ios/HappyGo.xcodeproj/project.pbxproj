@@ -220,6 +220,8 @@
 		3EC20B8218331CB000F2C4D6 /* jsb_cocos2dx_studio_auto.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3EC20B7F18331CB000F2C4D6 /* jsb_cocos2dx_studio_auto.cpp */; };
 		3EC20B8518331CC100F2C4D6 /* jsb_cocos2dx_studio_manual.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3EC20B8318331CC100F2C4D6 /* jsb_cocos2dx_studio_manual.cpp */; };
 		3EC20B8618331D7400F2C4D6 /* jsb_cocos2d_studio.js in Resources */ = {isa = PBXBuildFile; fileRef = 3EC20B7C18331CA200F2C4D6 /* jsb_cocos2d_studio.js */; };
+		3F0D2C3918D04C4900BC2271 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3F0D2C3818D04C4900BC2271 /* Images.xcassets */; };
+		3FBA20B518D00B75008A5610 /* audio in Resources */ = {isa = PBXBuildFile; fileRef = 3FBA20B418D00B75008A5610 /* audio */; };
 		3FF334201880E2F3001057C8 /* CCWebView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3FF333E51880E2F3001057C8 /* CCWebView.cpp */; };
 		3FF334211880E2F3001057C8 /* UIWebViewBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3FF333E71880E2F3001057C8 /* UIWebViewBridge.mm */; };
 		3FF334221880E2F3001057C8 /* WebViewLayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3FF333E91880E2F3001057C8 /* WebViewLayer.mm */; };
@@ -242,9 +244,6 @@
 		A922754C1517C094001B78AA /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A922754B1517C094001B78AA /* UIKit.framework */; };
 		A922754E1517C094001B78AA /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A922754D1517C094001B78AA /* Foundation.framework */; };
 		A92275501517C094001B78AA /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A922754F1517C094001B78AA /* CoreGraphics.framework */; };
-		D446FDA316102D7D000ADA7B /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = D446FDA216102D7D000ADA7B /* Default.png */; };
-		D446FDA516102D82000ADA7B /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D446FDA416102D82000ADA7B /* Default@2x.png */; };
-		D446FDA716102D86000ADA7B /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D446FDA616102D86000ADA7B /* Default-568h@2x.png */; };
 		D45446D3156DE74F00887EB5 /* AppController.mm in Sources */ = {isa = PBXBuildFile; fileRef = D45446CE156DE74F00887EB5 /* AppController.mm */; };
 		D45446D4156DE74F00887EB5 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D45446CF156DE74F00887EB5 /* main.m */; };
 		D45446D5156DE74F00887EB5 /* RootViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = D45446D2156DE74F00887EB5 /* RootViewController.mm */; };
@@ -688,6 +687,8 @@
 		3EC20B8018331CB000F2C4D6 /* jsb_cocos2dx_studio_auto.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = jsb_cocos2dx_studio_auto.hpp; sourceTree = "<group>"; };
 		3EC20B8318331CC100F2C4D6 /* jsb_cocos2dx_studio_manual.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = jsb_cocos2dx_studio_manual.cpp; sourceTree = "<group>"; };
 		3EC20B8418331CC100F2C4D6 /* jsb_cocos2dx_studio_manual.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jsb_cocos2dx_studio_manual.h; sourceTree = "<group>"; };
+		3F0D2C3818D04C4900BC2271 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = HappyGo/Images.xcassets; sourceTree = "<group>"; };
+		3FBA20B418D00B75008A5610 /* audio */ = {isa = PBXFileReference; lastKnownFileType = folder; name = audio; path = ../Resources/audio; sourceTree = "<group>"; };
 		3FF333DF1880E2F3001057C8 /* cqwrap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cqwrap.h; sourceTree = "<group>"; };
 		3FF333E31880E2F3001057C8 /* CCWebView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCWebView.h; sourceTree = "<group>"; };
 		3FF333E51880E2F3001057C8 /* CCWebView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CCWebView.cpp; sourceTree = "<group>"; };
@@ -723,9 +724,6 @@
 		A922754B1517C094001B78AA /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		A922754D1517C094001B78AA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		A922754F1517C094001B78AA /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
-		D446FDA216102D7D000ADA7B /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
-		D446FDA416102D82000ADA7B /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
-		D446FDA616102D86000ADA7B /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		D45446CD156DE74F00887EB5 /* AppController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppController.h; sourceTree = "<group>"; };
 		D45446CE156DE74F00887EB5 /* AppController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AppController.mm; sourceTree = "<group>"; };
 		D45446CF156DE74F00887EB5 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -767,13 +765,12 @@
 		15628F5B15F0F5C2000CF24B /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				3F0D2C3818D04C4900BC2271 /* Images.xcassets */,
 				3FF3342B1880E348001057C8 /* cqwrap */,
 				46513EB7187C034200B5ABE1 /* index.js */,
 				1AE4B40116D1FECD003C6D1C /* res */,
 				1AE4B40216D1FECD003C6D1C /* src */,
-				D446FDA616102D86000ADA7B /* Default-568h@2x.png */,
-				D446FDA216102D7D000ADA7B /* Default.png */,
-				D446FDA416102D82000ADA7B /* Default@2x.png */,
+				3FBA20B418D00B75008A5610 /* audio */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -1767,6 +1764,11 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0430;
+				TargetAttributes = {
+					A922753C1517C094001B78AA = {
+						DevelopmentTeam = 2C82CZ943C;
+					};
+				};
 			};
 			buildConfigurationList = A92275371517C094001B78AA /* Build configuration list for PBXProject "HappyGo" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -1807,6 +1809,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3FF3342C1880E348001057C8 /* cqwrap in Resources */,
+				3F0D2C3918D04C4900BC2271 /* Images.xcassets in Resources */,
 				3EC20B8618331D7400F2C4D6 /* jsb_cocos2d_studio.js in Resources */,
 				1A5E740017F0870800B9ACAE /* jsb_deprecated.js in Resources */,
 				1AA51AEB16F71C3D000FDF05 /* jsb_chipmunk_constants.js in Resources */,
@@ -1821,10 +1824,8 @@
 				1A2757C11697FBE500504026 /* jsb_debugger.js in Resources */,
 				1A2757C21697FBE500504026 /* jsb_opengl.js in Resources */,
 				1A2757C31697FBE500504026 /* jsb_sys.js in Resources */,
+				3FBA20B518D00B75008A5610 /* audio in Resources */,
 				1A2757C41697FBE500504026 /* jsb.js in Resources */,
-				D446FDA316102D7D000ADA7B /* Default.png in Resources */,
-				D446FDA516102D82000ADA7B /* Default@2x.png in Resources */,
-				D446FDA716102D86000ADA7B /* Default-568h@2x.png in Resources */,
 				15A3D3231682F0A0002FB0C5 /* README in Resources */,
 				15A3D38D1682F0B6002FB0C5 /* CMakeLists.txt in Resources */,
 				1AE4B40416D1FECD003C6D1C /* res in Resources */,
@@ -2116,6 +2117,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 1;
@@ -2156,6 +2161,7 @@
 					"-ljs_static",
 				);
 				PRODUCT_NAME = HappyGo;
+				PROVISIONING_PROFILE = "509CA94C-A028-4A35-B812-7711DF0ECAC2";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
 			};
@@ -2165,6 +2171,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Prefix.pch;
@@ -2202,6 +2212,7 @@
 					"-ljs_static",
 				);
 				PRODUCT_NAME = HappyGo;
+				PROVISIONING_PROFILE = "509CA94C-A028-4A35-B812-7711DF0ECAC2";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 				WRAPPER_EXTENSION = app;

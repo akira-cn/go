@@ -42,4 +42,8 @@ var g_resources = [
     //bgm
 
     //effect
+    {src:"audio/btnclick.mp3"},
+    {src:"audio/putstone.mp3"},
+    {src:"audio/submenu_click.mp3"},
+    {src:"audio/wrong.mp3"},
 ];

@@ -38,7 +38,7 @@ var MainLayer = GameLayer.extend({
 
         var easyButton = new Button('button-easy.png',
             function(){
-                Audio.playEffect('audio/btnclick.ogg');
+                Audio.playEffect('audio/btnclick.mp3');
                 
                 //var MyScene = require('src/view/physics_scene');
                 //var playScene = new MyScene();
@@ -56,7 +56,7 @@ var MainLayer = GameLayer.extend({
 
         var normalButton = new Button('button-normal.png',
             function(){
-                Audio.playEffect('audio/btnclick.ogg');
+                Audio.playEffect('audio/btnclick.mp3');
                 var playScene = new PlayScene('normal');
                 var scene = cc.TransitionFade.create(0.8, playScene);
                 director.pushScene(scene);                
@@ -70,7 +70,7 @@ var MainLayer = GameLayer.extend({
 
         var hardButton = new Button('button-hard.png', 
             function(){
-                Audio.playEffect('audio/btnclick.ogg');
+                Audio.playEffect('audio/btnclick.mp3');
                 var playScene = new PlayScene('hard');
                 var scene = cc.TransitionFade.create(0.8, playScene);
                 director.pushScene(scene);
@@ -90,7 +90,7 @@ var MainLayer = GameLayer.extend({
 
         var soundButton = new Button(sound_btn_pic[enabelSound], 
             function(touch, item){
-                Audio.playEffect('audio/btnclick.ogg');
+                Audio.playEffect('audio/btnclick.mp3');
                 enabelSound = !enabelSound - 0;
                 Audio.setEnable(enabelSound);
                 item.setContentSprite(cc.Sprite.createWithSpriteFrameName(sound_btn_pic[enabelSound]));

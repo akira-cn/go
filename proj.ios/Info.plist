@@ -9,37 +9,11 @@
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
 	<key>CFBundleIconFiles</key>
-	<array>
-		<string>Icon.png</string>
-		<string>Icon@2x.png</string>
-		<string>Icon-72.png</string>
-		<string>Icon-144.png</string>
-		<string>Icon-57.png</string>
-		<string>Icon-114.png</string>
-		<string>Icon-76.png</string>
-		<string>Icon-120.png</string>
-		<string>Icon-152.png</string>
-	</array>
+	<array/>
 	<key>CFBundleIcons</key>
-	<dict>
-		<key>CFBundlePrimaryIcon</key>
-		<dict>
-			<key>CFBundleIconFiles</key>
-			<array>
-				<string>Icon-72.png</string>
-				<string>Icon.png</string>
-				<string>Icon@2x.png</string>
-				<string>Icon-57.png</string>
-				<string>Icon-114.png</string>
-				<string>Icon-144.png</string>
-				<string>Icon-76.png</string>
-				<string>Icon-120.png</string>
-				<string>Icon-152.png</string>
-			</array>
-			<key>UIPrerenderedIcon</key>
-			<true/>
-		</dict>
-	</dict>
+	<dict/>
+	<key>CFBundleIcons~ipad</key>
+	<dict/>
 	<key>CFBundleIdentifier</key>
 	<string>com.weizoo.game.go.HappyGo</string>
 	<key>CFBundleInfoDictionaryVersion</key>
@@ -51,9 +25,9 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>1.0</string>
+	<string>1.0.0</string>
 	<key>LSRequiresIPhoneOS</key>
-	<true/>
+	<false/>
 	<key>UIPrerenderedIcon</key>
 	<true/>
 	<key>UIRequiredDeviceCapabilities</key>
@@ -67,8 +41,7 @@
 	<true/>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
-		<string>UIInterfaceOrientationLandscapeRight</string>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationPortrait</string>
 	</array>
 </dict>
 </plist>

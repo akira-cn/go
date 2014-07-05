@@ -32,9 +32,14 @@ public class CocosWebActivity extends Activity {
         {
         	public boolean shouldOverrideUrlLoading(final WebView view, final String url) {
         		if(url.startsWith("weizoo:")){
-        			//JavaScript伪协议 to cocos2dx-jsb
+        			//JavaScript interface to cocos2dx-jsb
         			String jsCode = url.replaceAll("^weizoo:", "");
         			//jsCode = jsCode.replaceAll("\"", "\\\\\"");
+        			
+        			if(jsCode.equals("close()")){
+        				CocosWebActivity.this.finish();
+        				return true;
+        			}
         			
         			JSONObject data = new JSONObject();
         			try {

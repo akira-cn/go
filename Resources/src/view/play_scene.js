@@ -39,7 +39,7 @@ function putStone(stone, boardSprite, cursor){
         }else{
             cursorSprite.setPosition(cc.p(x, y));
         }
-        Audio.playEffect('audio/putstone.ogg');
+        Audio.playEffect('audio/putstone.mp3');
     }else{
         if(boardSprite.cursor){
             boardSprite.removeChild(boardSprite.cursor, true);
@@ -58,6 +58,7 @@ var WeiqiLayer = GameLayer.extend({
         this.parent = parent;
 
         var boardSprite = new BaseSprite("board.png");
+        boardSprite.setCascadeOpacityEnabled(false);
         this.addSprite(TransitionFade.create(0.5, boardSprite, 150), {
                 x: 5,
                 y: 110,
@@ -89,7 +90,7 @@ var WeiqiLayer = GameLayer.extend({
                     self.parent.updateScore();
                 }, 500);
             }
-            Audio.playEffect('audio/wrong.ogg');
+            Audio.playEffect('audio/wrong.mp3');
         });
 
         weiqi.on('gameover', function(score){
@@ -216,7 +217,7 @@ var LevelLayer = GameLayer.extend({
                                     self.removeFromParent(true);
                                     self.parent.levelLayer = null;
 
-                                    Audio.playEffect('audio/submenu_click.ogg');
+                                    Audio.playEffect('audio/submenu_click.mp3');
                                 }
                             })(c)            
                         );
@@ -370,9 +371,9 @@ var MainLayer = GameLayer.extend({
 
     loadGame: function(level){
 
-        if(director.offsetY > 25){
+        /*if(director.offsetY > 25){
             native.call('showAd');
-        }
+        }*/
 
         level = level || 0;
         var mode = this.mode || 'easy';
@@ -436,7 +437,7 @@ var MainLayer = GameLayer.extend({
                 zOrder: 128
             },
             function(){
-                Audio.playEffect('audio/btnclick.ogg');
+                Audio.playEffect('audio/btnclick.mp3');
                 self.goNext();
             });
 
@@ -447,7 +448,7 @@ var MainLayer = GameLayer.extend({
                 zOrder: 128 
             },
             function(){
-                Audio.playEffect('audio/btnclick.ogg');
+                Audio.playEffect('audio/btnclick.mp3');
                 self.goBack();
             });
         
@@ -485,9 +486,9 @@ var MainLayer = GameLayer.extend({
             if(x <= 10 && y <= 10){
                 if(!self.weiqi.hasStone(x,y)){
                     self.weiqi.proceed(x, y);
-                    if(director.offsetY > 25){
+                    /*if(director.offsetY > 25){
                         native.call('hideAd');
-                    }
+                    }*/
                     self.gameInit = false;
                     self.unregisterDelegate();
                     self.setTimeout(function(){
@@ -508,9 +509,9 @@ var MainLayer = GameLayer.extend({
         this.gameData.current = this.level;
         UserData.set(this.mode, this.gameData);
 
-        if(director.offsetY > 25){
+        /*if(director.offsetY > 25){
             native.call('showAd');
-        }
+        }*/
     },
     backClicked: function(){
         this.goBack();

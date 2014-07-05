@@ -64,7 +64,7 @@ var MyLayer = CPLayer.extend({
             if(!e){
                 //e = true;
                 //cc.log(arguments);
-                Audio.playEffect('audio/putstone.ogg');
+                Audio.playEffect('audio/putstone.mp3');
             }
             return true;
         }, null, null, null);

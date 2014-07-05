@@ -10,6 +10,8 @@
 	<string>HappyGo</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
+		<key>7B31E201-043A-4385-B001-175744A69483</key>
+		<string>ssh://github.com/finscn/iCreator.git</string>
 		<key>A1438C5D-D6C1-4DA1-9282-F10D3BD01070</key>
 		<string>ssh://github.com/akira-cn/Happy-Go-Game.git</string>
 	</dict>
@@ -17,6 +19,8 @@
 	<string>proj.ios/HappyGo.xcodeproj/project.xcworkspace</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
+		<key>7B31E201-043A-4385-B001-175744A69483</key>
+		<string>../../../tools/iCreator</string>
 		<key>A1438C5D-D6C1-4DA1-9282-F10D3BD01070</key>
 		<string>../../..</string>
 	</dict>
@@ -35,6 +39,14 @@
 			<string>A1438C5D-D6C1-4DA1-9282-F10D3BD01070</string>
 			<key>IDESourceControlWCCName</key>
 			<string>HappyGo</string>
+		</dict>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>7B31E201-043A-4385-B001-175744A69483</string>
+			<key>IDESourceControlWCCName</key>
+			<string>iCreator</string>
 		</dict>
 	</array>
 </dict>

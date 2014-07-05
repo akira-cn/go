@@ -44,16 +44,16 @@ cc.dumpConfig();
     director.setAnimationInterval(1.0 / 30);
 
     var frameSize = director.getFrameSize();
-
-    if (frameSize.height / frameSize.width < 480.0/800) {
-        eglView.setDesignResolutionSize(480, 800, cc.RESOLUTION_POLICY.SHOW_ALL);
-    }else{
-        eglView.setDesignResolutionSize(480, 800, cc.RESOLUTION_POLICY.NOBORDER);
-    }
-
     var winSize = director.getWinSize();
 
-    director.offsetY = (winSize.height - winSize.width * frameSize.height / frameSize.width)/2;
+    if (frameSize.height / frameSize.width < 480.0/800 
+        || frameSize.height / frameSize.width >= 0.75) {
+        eglView.setDesignResolutionSize(480, 800, cc.RESOLUTION_POLICY.SHOW_ALL);
+        director.offsetY = 0;
+    }else{
+        eglView.setDesignResolutionSize(480, 800, cc.RESOLUTION_POLICY.NOBORDER);
+        director.offsetY = (winSize.height - winSize.width * frameSize.height / frameSize.width)/2;
+    }
 
     //require+CommonJS wrapper
     _require('src/app.js'); 
