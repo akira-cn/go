@@ -30,7 +30,7 @@ void CCWebView::close(){
 	CCScene* scene = CCDirector::sharedDirector()->getRunningScene();
 	
 	if(scene->getChildByTag(tWebview)) {
-        scene->getChildByTag(tWebview)->removeFromParentAndCleanup(true);
+        ((WebViewLayer *)scene->getChildByTag(tWebview))->onBackbuttonClick();
     }
 }
 

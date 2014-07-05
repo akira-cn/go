@@ -13,8 +13,8 @@ LOCAL_SRC_FILES :=  \
 	./src/scripting/cqwrap_misc_manual.cpp \
 	./src/util/NativeAdapter.cpp \
 	./src/util/MessageDelegate.cpp \
-	./src/util/md5.cpp \
-	./src/GUI/android/CCWebView.cpp
+    	./src/util/ResUpdater.cpp \
+	./src/util/md5.cpp
 
 LOCAL_WHOLE_STATIC_LIBRARIES := cocos2dx_static 
 LOCAL_WHOLE_STATIC_LIBRARIES += cocosdenshion_static 
@@ -22,8 +22,6 @@ LOCAL_WHOLE_STATIC_LIBRARIES += cocos_extension_static
 LOCAL_WHOLE_STATIC_LIBRARIES += chipmunk_static 
 LOCAL_WHOLE_STATIC_LIBRARIES += spidermonkey_static 
 LOCAL_WHOLE_STATIC_LIBRARIES += scriptingcore-spidermonkey
-
-LOCAL_SHARED_LIBRARIES += libwebsockets_shared
 
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/src 
 

@@ -23,24 +23,21 @@ THE SOFTWARE.
 ****************************************************************************/
 package com.weizoo.game.go.HappyGo;
 
-import java.lang.reflect.Method;
-
-import org.cocos2dx.lib.Cocos2dxActivity;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.google.ads.*;
 import com.umeng.analytics.MobclickAgent;
+import com.weizoo.utils.CocosMainActivity;
 import com.weizoo.utils.CocosMessageDelegate;
 import com.weizoo.utils.CocosMessageInterface;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 
-public class HappyGo extends Cocos2dxActivity implements CocosMessageInterface {
+public class HappyGo extends CocosMainActivity implements CocosMessageInterface {
 	private AdView adView;
 	private boolean yunTest = false;
 	protected void onCreate(Bundle savedInstanceState){
@@ -132,38 +129,4 @@ public class HappyGo extends Cocos2dxActivity implements CocosMessageInterface {
         	e.printStackTrace();
         }    	
     }
-    
-	@Override
-	public void onMessage(String message, String data) {
-		Log.d("Log", message);
-		if(message.equals("message")){
-			try {
-				JSONObject jsonData = new JSONObject(data);
-				if(jsonData.has("jsonrpc")){
-					JSONObject result = new JSONObject();
-					result.put("id", jsonData.getInt("id"));
-					result.put("jsonrpc", "2.0");
-					try {
-						@SuppressWarnings("rawtypes")
-						Class[] cargs = new Class[1];
-						cargs[0] = JSONObject.class;
-						Method method = this.getClass().getMethod(jsonData.getString("method"), cargs);
-						result.put("result", method.invoke(this, jsonData.getJSONObject("params")));
-						this.postMessage("message", result.toString());
-					} catch (Exception e) {
-						result.put("error", e.getMessage());
-						e.printStackTrace();
-					}		
-				}
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} 
-		}
-	}
-
-	@Override
-	public void postMessage(String message, String data) {
-		CocosMessageDelegate.postMessage(message, data);
-	}
 }

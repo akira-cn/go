@@ -12,6 +12,7 @@
 #include "pattern/CustEvent.h"
 #include "util/NativeAdapter.h"
 #include "util/MessageDelegate.h"
+#include "util/ResUpdater.h"
 #include "util/md5.h"
 #include "GUI/CCWebView.h"
 

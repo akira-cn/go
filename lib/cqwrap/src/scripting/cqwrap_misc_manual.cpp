@@ -2,6 +2,7 @@
 #include "../GUI/CCWebView.h"
 #include "../util/MessageDelegate.h"
 #include "../util/md5.h"
+#include "../util/ResUpdater.h"
 
 
 static JSBool js_cocos2dx_alert(JSContext *cx, uint32_t argc, jsval *vp)
@@ -47,6 +48,7 @@ static JSBool js_cocos2dx_md5(JSContext *cx, uint32_t argc, jsval *vp)
 	return JS_FALSE;
 }
 
+#if(CC_TARGET_PLATFORM == CC_PLATFORM_IOS)	
 static JSBool js_cocos2dx_open(JSContext *cx, uint32_t argc, jsval *vp)
 {
 	jsval *argv = JS_ARGV(cx, vp);
@@ -80,6 +82,7 @@ static JSBool js_cocos2dx_close(JSContext *cx, uint32_t argc, jsval *vp)
 	JS_ReportError(cx, "wrong number of arguments: %d, was expecting %d", argc, 0);
 	return JS_FALSE;
 }
+#endif
 
 static JSBool js_cocos2dx_postMessage(JSContext *cx, uint32_t argc, jsval *vp)
 {
@@ -101,6 +104,40 @@ static JSBool js_cocos2dx_postMessage(JSContext *cx, uint32_t argc, jsval *vp)
 	}
 	JS_ReportError(cx, "wrong number of arguments: %d, was expecting %d", argc, 1);
 	return JS_FALSE;
+}
+
+static JSBool js_cocos2dx_updateResources(JSContext *cx, uint32_t argc, jsval *vp)
+{
+	jsval *argv = JS_ARGV(cx, vp);
+	if (argc == 3) {
+		std::string* packageUrl = new std::string();
+		std::string* versionFileUrl = new std::string();
+		std::string* storagePath = new std::string();
+
+		do {
+			JSBool ok = jsval_to_std_string(cx, argv[0], packageUrl);
+			JSB_PRECONDITION2( ok, cx, JS_FALSE, "Error processing arguments");
+
+			ok = jsval_to_std_string(cx, argv[1], versionFileUrl);
+			JSB_PRECONDITION2( ok, cx, JS_FALSE, "Error processing arguments");
+
+			ok = jsval_to_std_string(cx, argv[2], storagePath);
+			JSB_PRECONDITION2( ok, cx, JS_FALSE, "Error processing arguments");
+		} while (0);
+
+		extension::ResUpdater::getInstance()->getAssetsManager(
+									packageUrl->c_str(), versionFileUrl->c_str(), storagePath->c_str()
+								)->update();
+
+		CC_SAFE_DELETE(packageUrl);
+		CC_SAFE_DELETE(versionFileUrl);
+		CC_SAFE_DELETE(storagePath);
+
+		JS_SET_RVAL(cx, vp, JSVAL_VOID);
+		return JS_TRUE;	
+	}
+	JS_ReportError(cx, "wrong number of arguments: %d, was expecting %d", argc, 3);
+	return JS_FALSE;	
 }
 
 #if CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID
@@ -135,14 +172,32 @@ void register_all_misc_manual(JSContext* cx, JSObject* global){
 
 	JS_DefineFunction(cx, global, "alert", js_cocos2dx_alert, 1, JSPROP_READONLY | JSPROP_PERMANENT | JSPROP_ENUMERATE);
 	JS_DefineFunction(cx, global, "md5", js_cocos2dx_md5, 1, JSPROP_READONLY | JSPROP_PERMANENT | JSPROP_ENUMERATE);
+
+#if(CC_TARGET_PLATFORM == CC_PLATFORM_IOS)	
 	JS_DefineFunction(cx, global, "open", js_cocos2dx_open, 1, JSPROP_READONLY | JSPROP_PERMANENT | JSPROP_ENUMERATE);
 	JS_DefineFunction(cx, global, "close", js_cocos2dx_close, 0, JSPROP_READONLY | JSPROP_PERMANENT | JSPROP_ENUMERATE);
+#endif
 
 	createGlobalObj(cx, global, "navigator");
 	ScriptingCore::getInstance()->evalString(CCString::createWithFormat("(function(){navigator.userAgent = '%s'})()", USER_AGENT)->getCString(), NULL);
 
 	JSObject* native = createGlobalObj(cx, global, "native");
 	JS_DefineFunction(cx, native, "postMessage", js_cocos2dx_postMessage, 2, JSPROP_READONLY | JSPROP_PERMANENT);
+
+
+	// first, try to get the cc
+	jsval nsval;
+	JSObject *cc;
+	JS_GetProperty(cx, global, "cc", &nsval);
+	if (nsval == JSVAL_VOID) {
+		cc = JS_NewObject(cx, NULL, NULL, NULL);
+		nsval = OBJECT_TO_JSVAL(cc);
+		JS_SetProperty(cx, cc, "cc", &nsval);
+	} else {
+		JS_ValueToObject(cx, nsval, &cc);
+	}
+
+	JS_DefineFunction(cx, cc, "updateResources", js_cocos2dx_updateResources, 3, JSPROP_READONLY | JSPROP_PERMANENT | JSPROP_ENUMERATE);	
 
 	CCSize size = CCEGLView::sharedOpenGLView()->getFrameSize();
 	ScriptingCore::getInstance()->evalString(CCString::createWithFormat("cc.Director.getInstance().getFrameSize = function(){return {width:%lf,height:%lf}};", size.width, size.height)->getCString(), NULL);

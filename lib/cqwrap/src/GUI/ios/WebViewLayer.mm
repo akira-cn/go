@@ -30,8 +30,8 @@
         if ( !CCLayer::init() ) {
             return false;
         }
-         
-        gUIWebViewBridge = [[UIWebViewBridge alloc] init];  
+        
+        gUIWebViewBridge = [[UIWebViewBridge alloc] init];
         [gUIWebViewBridge setLayerWebView : this URLString : url : title];
         
         return true;
