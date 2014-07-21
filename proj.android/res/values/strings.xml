@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Happy Go</string>
+    <string name="app_name">欢乐围棋</string>
+    <!-- Class name of game entry -->
+    <string name="g_class_name">com.weizoo.go.HappyGo</string>
 </resources>

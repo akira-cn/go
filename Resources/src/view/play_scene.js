@@ -94,11 +94,17 @@ var WeiqiLayer = GameLayer.extend({
         });
 
         weiqi.on('gameover', function(score){
-
+            var parent = self.getParent();
             var scores = 'EDCBAS';
             score = Math.max(0, score-0+self.parent.score);
             self.parent.showScore(scores[score]);
             self.parent.gameover = true;
+
+            if(score > 1){
+                native.call('logLevelState', {state: 'finish', level: parent.mode+'-'+parent.level});
+            }else{
+                native.call('logLevelState', {state: 'fail', level: parent.mode+'-'+parent.level});
+            }
         });
 
         var labelSprites = [];
@@ -396,6 +402,8 @@ var MainLayer = GameLayer.extend({
 
         this.level = level;
         this.gameInit = true;
+
+        native.call('logLevelState', {state: 'start', level: mode+'-'+level});
     },
 
     init:function (mode) {

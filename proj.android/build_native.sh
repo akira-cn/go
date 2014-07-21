@@ -84,6 +84,10 @@ cp -f "$BINDINGS_JS_ROOT"/* "$APP_ANDROID_ROOT"/assets
 # copy lib/cqwrap/js/cqwrap/*.js into assets' root
 cp -rf "$APP_ROOT"/lib/cqwrap/js/* "$APP_ANDROID_ROOT"/assets
 
+if [ -d "$APP_ANDROID_ROOT"/extra_assets ]; then
+    cp -rf "$APP_ANDROID_ROOT"/extra_assets/* "$APP_ANDROID_ROOT"/assets
+fi
+
 # compile js
 if [ $DEBUG = false ]; then
 COCOS2D_CONSOLE=$COCOS2DX_ROOT/tools/cocos2d-console/console
@@ -101,3 +105,7 @@ set -x
 "$NDK_ROOT"/ndk-build $PARALLEL_BUILD_FLAG -C "$APP_ANDROID_ROOT" $* \
     "NDK_MODULE_PATH=${COCOS2DX_ROOT}:${COCOS2DX_ROOT}/cocos2dx/platform/third_party/android/prebuilt" \
     NDK_LOG=0 V=0
+
+if [ -d "$APP_ANDROID_ROOT"/extra_libs ]; then
+    cp -rf "$APP_ANDROID_ROOT"/extra_libs/* "$APP_ANDROID_ROOT"/libs
+fi

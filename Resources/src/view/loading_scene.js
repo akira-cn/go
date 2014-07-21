@@ -31,8 +31,15 @@ var LoadingScene = CCLoadingScene.extend({
 
         this._super(frameCaches);
 
-        var bgLayer = new BgLayer('res/bg-loading.png');
-        this.addChild(bgLayer);
+        //var bgLayer = new BgLayer('res/bg-loading.png');
+        //this.addChild(bgLayer);
+        
+        var loading = cc.createSprite('@Loading...', {
+            anchor: [0.5, 0.5],
+            fontSize: 26,
+            xy: [240, 460],
+        });
+        this.addChild(loading);
 
         //progress bar intialize
         var winSize = cc.Director.getInstance().getWinSize();
