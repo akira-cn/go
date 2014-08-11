@@ -4,7 +4,11 @@ define(function(require, exports, module){
 
     var LoadingScene = require('src/view/loading_scene.js');
 
-    native.call('getLocale').then(function(res){
+    //始终英文
+    var loadingScene = new LoadingScene({country: 'EN'});
+    director.runWithScene(loadingScene);
+
+    /*native.call('getLocale').then(function(res){
         var loadingScene = new LoadingScene(res);
         director.runWithScene(loadingScene);
     }).otherwise(function(){
@@ -12,7 +16,7 @@ define(function(require, exports, module){
         director.runWithScene(loadingScene);    
     }).otherwise(function(err){
         cc.log(err);
-    });
+    });*/
 
 });
 
